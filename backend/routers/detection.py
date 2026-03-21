@@ -13,19 +13,20 @@ ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp"}
 
 @router.post("/detect", response_model=DetectionResponse)
 async def detect_violations(file: UploadFile = File(...)):
-    if not is_model_loaded():
-        raise HTTPException(
-            503,
-            "Model not loaded. Train a model first (python model/train.py) "
-            "and place best.pt in model/best.pt, then restart the server."
-        )
-
+    # Validate input first (give useful errors even if model is down)
     if file.content_type not in ALLOWED_TYPES:
         raise HTTPException(400, f"File type {file.content_type} not supported. Use JPEG, PNG, or WebP.")
 
     image_bytes = await file.read()
     if len(image_bytes) > MAX_IMAGE_SIZE:
         raise HTTPException(400, "Image exceeds 10MB limit.")
+
+    if not is_model_loaded():
+        raise HTTPException(
+            503,
+            "Model not loaded. Train a model first (python model/train.py) "
+            "and place best.pt in model/best.pt, then restart the server."
+        )
 
     detections, original_image = detect(image_bytes)
     violations = check_violations(detections)
