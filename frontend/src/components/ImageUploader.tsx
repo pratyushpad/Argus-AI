@@ -2,7 +2,9 @@
 
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Upload, X, Image as ImageIcon, FileImage } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Upload, X, FileImage } from "lucide-react";
+import GlowingCard from "@/components/ui/GlowingCard";
 
 interface Props {
   onFileSelect: (file: File) => void;
@@ -11,8 +13,8 @@ interface Props {
 
 export default function ImageUploader({ onFileSelect, isLoading }: Props) {
   const [preview, setPreview] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string>("");
-  const [fileSize, setFileSize] = useState<string>("");
+  const [fileName, setFileName] = useState("");
+  const [fileSize, setFileSize] = useState("");
 
   const formatSize = (bytes: number) => {
     if (bytes < 1024) return `${bytes} B`;
@@ -46,70 +48,104 @@ export default function ImageUploader({ onFileSelect, isLoading }: Props) {
     setFileSize("");
   };
 
-  if (preview) {
-    return (
-      <div className="rounded-2xl overflow-hidden glass animate-fade-in-scale">
-        <div className="relative">
-          <img
-            src={preview}
-            alt="Preview"
-            className="w-full max-h-[420px] object-contain bg-black/30"
-          />
-          {/* Gradient overlay at bottom */}
-          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#0F172A] to-transparent" />
-
-          {!isLoading && (
-            <button
-              onClick={clearPreview}
-              className="absolute top-3 right-3 p-1.5 rounded-lg bg-black/50 hover:bg-black/70 border border-white/10 transition-all duration-200 cursor-pointer"
-              aria-label="Remove image"
-            >
-              <X className="w-4 h-4 text-white" />
-            </button>
-          )}
-        </div>
-        <div className="px-4 py-3 flex items-center gap-3 text-xs border-t border-white/[0.06]">
-          <FileImage className="w-4 h-4 text-slate-500" />
-          <span className="text-slate-400 truncate">{fileName}</span>
-          <span className="text-slate-600 font-mono">{fileSize}</span>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div
-      {...getRootProps()}
-      className={`group relative rounded-2xl border-2 border-dashed p-16 text-center cursor-pointer transition-all duration-300 ${
-        isDragActive
-          ? "border-red-500/40 bg-red-500/[0.04]"
-          : "border-white/[0.08] hover:border-white/[0.15] bg-white/[0.02] hover:bg-white/[0.03]"
-      }`}
-    >
-      <input {...getInputProps()} />
+    <AnimatePresence mode="wait">
+      {preview ? (
+        <motion.div
+          key="preview"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+        >
+          <GlowingCard>
+            <div className="relative">
+              <img
+                src={preview}
+                alt="Preview"
+                className="w-full max-h-[420px] object-contain bg-black/40 rounded-t-2xl"
+              />
+              <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#080c18] to-transparent" />
+              {!isLoading && (
+                <motion.button
+                  onClick={clearPreview}
+                  whileHover={{ scale: 1.1, rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="absolute top-3 right-3 p-2 rounded-xl bg-black/60 hover:bg-red-500/80 border border-white/10 transition-colors cursor-pointer"
+                  aria-label="Remove image"
+                >
+                  <X className="w-4 h-4 text-white" />
+                </motion.button>
+              )}
+            </div>
+            <div className="px-5 py-3.5 flex items-center gap-3 text-xs border-t border-white/[0.04]">
+              <FileImage className="w-4 h-4 text-slate-500" />
+              <span className="text-slate-400 truncate">{fileName}</span>
+              <span className="text-slate-600 font-mono text-[11px]">{fileSize}</span>
+            </div>
+          </GlowingCard>
+        </motion.div>
+      ) : (
+        <motion.div
+          key="dropzone"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+        >
+          <GlowingCard
+            glowColor={isDragActive ? "rgba(239, 68, 68, 0.2)" : "rgba(239, 68, 68, 0.1)"}
+          >
+            <div
+              {...getRootProps()}
+              className={`relative p-16 md:p-20 text-center cursor-pointer transition-all duration-300 rounded-2xl ${
+                isDragActive ? "bg-red-500/[0.03]" : ""
+              }`}
+            >
+              <input {...getInputProps()} />
 
-      <div className="relative inline-flex mb-5">
-        <div className={`absolute inset-0 rounded-2xl blur-xl transition-opacity duration-300 ${
-          isDragActive ? "bg-red-500/20 opacity-100" : "bg-white/5 opacity-0 group-hover:opacity-100"
-        }`} />
-        <div className="relative p-4 rounded-2xl bg-white/[0.04] border border-white/[0.06]">
-          <Upload className={`w-7 h-7 transition-colors duration-200 ${
-            isDragActive ? "text-red-400" : "text-slate-500 group-hover:text-slate-400"
-          }`} />
-        </div>
-      </div>
+              {/* Animated upload icon */}
+              <motion.div
+                className="relative inline-flex mb-6"
+                animate={isDragActive ? { scale: 1.1, y: -5 } : { scale: 1, y: 0 }}
+                transition={{ type: "spring", stiffness: 200 }}
+              >
+                <motion.div
+                  className="absolute inset-0 rounded-2xl bg-red-500/20 blur-2xl"
+                  animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                />
+                <div className="relative p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+                  <Upload className={`w-8 h-8 transition-colors duration-300 ${
+                    isDragActive ? "text-red-400" : "text-slate-500"
+                  }`} />
+                </div>
+              </motion.div>
 
-      <p className={`text-base font-medium mb-1.5 transition-colors duration-200 ${
-        isDragActive ? "text-red-400" : "text-slate-300"
-      }`}>
-        {isDragActive ? "Drop your image here" : "Drop a dashcam image here"}
-      </p>
-      <p className="text-sm text-slate-500 mb-4">
-        or <span className="text-slate-400 underline underline-offset-2 decoration-slate-600">browse files</span>
-      </p>
-      <p className="text-[11px] text-slate-600 font-mono">
-        JPEG, PNG, WebP / Max 10MB
-      </p>
-    </div>
+              <p className={`text-lg font-medium mb-2 transition-colors duration-200 ${
+                isDragActive ? "text-red-400" : "text-slate-200"
+              }`}>
+                {isDragActive ? "Drop it here" : "Drop a dashcam image"}
+              </p>
+              <p className="text-sm text-slate-500 mb-5">
+                or <span className="text-slate-400 underline underline-offset-4 decoration-slate-600 hover:decoration-red-500/50 transition-colors">browse files</span>
+              </p>
+              <div className="flex items-center justify-center gap-3 text-[11px] text-slate-600 font-mono">
+                <span className="px-2 py-0.5 rounded bg-white/[0.03] border border-white/[0.04]">JPEG</span>
+                <span className="px-2 py-0.5 rounded bg-white/[0.03] border border-white/[0.04]">PNG</span>
+                <span className="px-2 py-0.5 rounded bg-white/[0.03] border border-white/[0.04]">WebP</span>
+                <span className="text-slate-700">|</span>
+                <span>Max 10MB</span>
+              </div>
+
+              {/* Scan line animation */}
+              {isDragActive && (
+                <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+                  <div className="absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent animate-scan" />
+                </div>
+              )}
+            </div>
+          </GlowingCard>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

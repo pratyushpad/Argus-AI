@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { DetectionResponse } from "@/types/detection";
 import ViolationCard from "./ViolationCard";
+import GlowingCard from "@/components/ui/GlowingCard";
+import AnimatedCounter from "@/components/AnimatedCounter";
 import { Download, Eye, Shield, Car, ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
 
 interface Props {
   result: DetectionResponse;
@@ -11,9 +14,8 @@ interface Props {
 
 export default function ResultsPanel({ result }: Props) {
   const { detections, violations, annotated_image, summary } = result;
-  const [showAllDetections, setShowAllDetections] = useState(false);
-
-  const visibleDetections = showAllDetections ? detections : detections.slice(0, 6);
+  const [showAll, setShowAll] = useState(false);
+  const visible = showAll ? detections : detections.slice(0, 6);
 
   const downloadImage = () => {
     const link = document.createElement("a");
@@ -23,176 +25,172 @@ export default function ResultsPanel({ result }: Props) {
   };
 
   return (
-    <div className="space-y-5 stagger-children">
+    <div className="space-y-6">
       {/* Annotated Image */}
       {annotated_image ? (
-        <div className="glass rounded-2xl overflow-hidden glow-red">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">
-            <div className="flex items-center gap-2 text-[13px] font-medium text-slate-300">
-              <Eye className="w-4 h-4 text-slate-500" />
-              Detection Result
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <GlowingCard>
+            <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.04]">
+              <div className="flex items-center gap-2 text-[13px] font-medium text-slate-300">
+                <Eye className="w-4 h-4 text-slate-500" />
+                Detection Result
+              </div>
+              <motion.button
+                onClick={downloadImage}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-1.5 text-[11px] px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-white border border-white/[0.06] transition-all cursor-pointer"
+              >
+                <Download className="w-3 h-3" />
+                Download
+              </motion.button>
             </div>
-            <button
-              onClick={downloadImage}
-              className="flex items-center gap-1.5 text-[11px] px-2.5 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-slate-200 border border-white/[0.06] transition-all duration-200 cursor-pointer"
-            >
-              <Download className="w-3 h-3" />
-              Download
-            </button>
-          </div>
-          <img
-            src={`data:image/png;base64,${annotated_image}`}
-            alt="Detection result with annotated bounding boxes"
-            className="w-full object-contain bg-black/30"
-          />
-        </div>
+            <img
+              src={`data:image/png;base64,${annotated_image}`}
+              alt="Detection result with annotated bounding boxes"
+              className="w-full object-contain bg-black/40"
+            />
+          </GlowingCard>
+        </motion.div>
       ) : (
-        <div className="glass rounded-2xl p-10 text-center">
-          <div className="inline-flex p-3 rounded-xl bg-white/[0.03] mb-3">
-            <Eye className="w-6 h-6 text-slate-600" />
+        <GlowingCard>
+          <div className="p-12 text-center">
+            <div className="inline-flex p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.04] mb-4">
+              <Eye className="w-7 h-7 text-slate-600" />
+            </div>
+            <p className="text-sm text-slate-500">Annotated image available with live detection</p>
           </div>
-          <p className="text-sm text-slate-500">Annotated image available with live detection</p>
-        </div>
+        </GlowingCard>
       )}
 
-      {/* Summary Stats */}
+      {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatCard
-          icon={<Car className="w-4.5 h-4.5 text-blue-400" />}
-          label="Objects"
-          value={summary.total_objects}
-          glow="blue"
-        />
-        <StatCard
-          icon={<Shield className="w-4.5 h-4.5 text-red-400" />}
-          label="Violations"
-          value={summary.violation_count}
-          glow="red"
-        />
-        <StatCard
-          icon={<span className="w-2.5 h-2.5 rounded-full bg-red-500 inline-block" />}
-          label="High"
-          value={summary.high_severity}
-          glow="red"
-        />
-        <StatCard
-          icon={<span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block" />}
-          label="Medium"
-          value={summary.medium_severity}
-          glow="amber"
-        />
+        {[
+          { icon: <Car className="w-5 h-5 text-blue-400" />, label: "Objects", value: summary.total_objects, glow: "rgba(59,130,246,0.1)" },
+          { icon: <Shield className="w-5 h-5 text-red-400" />, label: "Violations", value: summary.violation_count, glow: "rgba(239,68,68,0.1)" },
+          { icon: <span className="w-3 h-3 rounded-full bg-red-500 inline-block" />, label: "High", value: summary.high_severity, glow: "rgba(239,68,68,0.08)" },
+          { icon: <span className="w-3 h-3 rounded-full bg-amber-500 inline-block" />, label: "Medium", value: summary.medium_severity, glow: "rgba(234,179,8,0.08)" },
+        ].map((stat, i) => (
+          <motion.div
+            key={stat.label}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+          >
+            <GlowingCard glowColor={stat.glow}>
+              <div className="p-4 text-center">
+                <div className="flex justify-center mb-2">{stat.icon}</div>
+                <AnimatedCounter value={stat.value} className="text-2xl font-bold text-white font-mono" />
+                <div className="text-[10px] text-slate-500 uppercase tracking-[0.15em] mt-1">{stat.label}</div>
+              </div>
+            </GlowingCard>
+          </motion.div>
+        ))}
       </div>
 
       {/* Violations */}
       {violations.length > 0 && (
         <div>
-          <h3 className="text-[11px] font-mono text-slate-500 uppercase tracking-widest mb-3">
+          <p className="text-[10px] font-mono text-slate-500 uppercase tracking-[0.2em] mb-3">
             Violations ({violations.length})
-          </h3>
+          </p>
           <div className="space-y-2.5">
             {violations.map((v, i) => (
-              <ViolationCard key={i} violation={v} />
+              <ViolationCard key={i} violation={v} index={i} />
             ))}
           </div>
         </div>
       )}
 
       {violations.length === 0 && (
-        <div className="text-center py-10 rounded-xl bg-emerald-500/[0.04] border border-emerald-500/10 glow-green">
-          <div className="inline-flex p-3 rounded-xl bg-emerald-500/10 mb-3">
-            <Shield className="w-6 h-6 text-emerald-400" />
-          </div>
-          <p className="text-emerald-400 font-medium text-sm">No violations detected</p>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center py-12 rounded-2xl bg-emerald-500/[0.03] border border-emerald-500/10"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 200 }}
+            className="inline-flex p-3 rounded-2xl bg-emerald-500/10 mb-3"
+          >
+            <Shield className="w-7 h-7 text-emerald-400" />
+          </motion.div>
+          <p className="text-emerald-400 font-medium">No violations detected</p>
           <p className="text-[12px] text-slate-500 mt-1">All clear in this image</p>
-        </div>
+        </motion.div>
       )}
 
       {/* Detections Table */}
       <div>
-        <h3 className="text-[11px] font-mono text-slate-500 uppercase tracking-widest mb-3">
+        <p className="text-[10px] font-mono text-slate-500 uppercase tracking-[0.2em] mb-3">
           All Detections ({detections.length})
-        </h3>
-        <div className="glass rounded-xl overflow-hidden">
+        </p>
+        <GlowingCard glowColor="rgba(255,255,255,0.04)">
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="border-b border-white/[0.06]">
-                <th className="px-4 py-3 text-left font-medium text-slate-500 text-[11px] uppercase tracking-wider">Class</th>
-                <th className="px-4 py-3 text-left font-medium text-slate-500 text-[11px] uppercase tracking-wider">Confidence</th>
-                <th className="px-4 py-3 text-left font-medium text-slate-500 text-[11px] uppercase tracking-wider hidden md:table-cell">Bbox</th>
+              <tr className="border-b border-white/[0.04]">
+                <th className="px-5 py-3 text-left font-medium text-slate-500 text-[10px] uppercase tracking-wider">Class</th>
+                <th className="px-5 py-3 text-left font-medium text-slate-500 text-[10px] uppercase tracking-wider">Confidence</th>
+                <th className="px-5 py-3 text-left font-medium text-slate-500 text-[10px] uppercase tracking-wider hidden md:table-cell">Bbox</th>
               </tr>
             </thead>
             <tbody>
-              {visibleDetections.map((d, i) => (
-                <tr
-                  key={i}
-                  className="border-t border-white/[0.03] hover:bg-white/[0.02] transition-colors duration-150"
-                >
-                  <td className="px-4 py-2.5 text-slate-300">{d.class_name}</td>
-                  <td className="px-4 py-2.5">
-                    <div className="flex items-center gap-2">
-                      <div className="w-16 h-1 rounded-full bg-white/[0.06] overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all ${
-                            d.confidence > 0.7
-                              ? "bg-emerald-400"
-                              : d.confidence > 0.4
-                              ? "bg-amber-400"
-                              : "bg-red-400"
-                          }`}
-                          style={{ width: `${d.confidence * 100}%` }}
-                        />
+              <AnimatePresence>
+                {visible.map((d, i) => (
+                  <motion.tr
+                    key={`${d.class_name}-${i}`}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.03 }}
+                    className="border-t border-white/[0.03] hover:bg-white/[0.02] transition-colors"
+                  >
+                    <td className="px-5 py-2.5 text-slate-300">{d.class_name}</td>
+                    <td className="px-5 py-2.5">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-20 h-1.5 rounded-full bg-white/[0.04] overflow-hidden">
+                          <motion.div
+                            className={`h-full rounded-full ${
+                              d.confidence > 0.7 ? "bg-emerald-400" :
+                              d.confidence > 0.4 ? "bg-amber-400" : "bg-red-400"
+                            }`}
+                            initial={{ width: 0 }}
+                            animate={{ width: `${d.confidence * 100}%` }}
+                            transition={{ delay: i * 0.05, duration: 0.5 }}
+                          />
+                        </div>
+                        <span className="font-mono text-[12px] text-slate-400 w-10">
+                          {(d.confidence * 100).toFixed(0)}%
+                        </span>
                       </div>
-                      <span className="font-mono text-[12px] text-slate-400 w-12">
-                        {(d.confidence * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-2.5 text-slate-600 font-mono text-[11px] hidden md:table-cell">
-                    [{d.bbox.map((b) => b.toFixed(2)).join(", ")}]
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="px-5 py-2.5 text-slate-600 font-mono text-[10px] hidden md:table-cell">
+                      [{d.bbox.map((b) => b.toFixed(2)).join(", ")}]
+                    </td>
+                  </motion.tr>
+                ))}
+              </AnimatePresence>
             </tbody>
           </table>
 
           {detections.length > 6 && (
-            <button
-              onClick={() => setShowAllDetections(!showAllDetections)}
-              className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[12px] text-slate-500 hover:text-slate-300 border-t border-white/[0.04] hover:bg-white/[0.02] transition-all duration-200 cursor-pointer"
+            <motion.button
+              onClick={() => setShowAll(!showAll)}
+              whileHover={{ backgroundColor: "rgba(255,255,255,0.03)" }}
+              className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[12px] text-slate-500 hover:text-slate-300 border-t border-white/[0.03] transition-colors cursor-pointer"
             >
-              {showAllDetections ? (
+              {showAll ? (
                 <>Show less <ChevronUp className="w-3.5 h-3.5" /></>
               ) : (
-                <>Show all {detections.length} detections <ChevronDown className="w-3.5 h-3.5" /></>
+                <>Show all {detections.length} <ChevronDown className="w-3.5 h-3.5" /></>
               )}
-            </button>
+            </motion.button>
           )}
-        </div>
+        </GlowingCard>
       </div>
-    </div>
-  );
-}
-
-function StatCard({
-  icon,
-  label,
-  value,
-  glow,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: number;
-  glow: "blue" | "red" | "amber";
-}) {
-  return (
-    <div className={`glass rounded-xl p-4 text-center transition-all duration-200 hover:bg-white/[0.04] ${
-      glow === "blue" ? "hover:shadow-blue-500/[0.04]" :
-      glow === "red" ? "hover:shadow-red-500/[0.04]" :
-      "hover:shadow-amber-500/[0.04]"
-    } hover:shadow-2xl`}>
-      <div className="flex justify-center mb-2">{icon}</div>
-      <div className="text-2xl font-bold text-white font-mono">{value}</div>
-      <div className="text-[10px] text-slate-500 uppercase tracking-widest mt-0.5">{label}</div>
     </div>
   );
 }
