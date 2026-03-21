@@ -6,24 +6,27 @@ import { AlertTriangle, AlertCircle, Info } from "lucide-react";
 const SEVERITY_CONFIG = {
   high: {
     icon: AlertTriangle,
-    bg: "bg-red-500/10",
-    border: "border-red-500/30",
-    badge: "bg-red-500",
-    text: "text-red-400",
+    bg: "bg-red-500/[0.06]",
+    border: "border-red-500/20",
+    badge: "bg-red-500/20 text-red-400",
+    iconColor: "text-red-400",
+    glow: "hover:shadow-red-500/[0.04]",
   },
   medium: {
     icon: AlertCircle,
-    bg: "bg-yellow-500/10",
-    border: "border-yellow-500/30",
-    badge: "bg-yellow-500",
-    text: "text-yellow-400",
+    bg: "bg-amber-500/[0.06]",
+    border: "border-amber-500/20",
+    badge: "bg-amber-500/20 text-amber-400",
+    iconColor: "text-amber-400",
+    glow: "hover:shadow-amber-500/[0.04]",
   },
   low: {
     icon: Info,
-    bg: "bg-blue-500/10",
-    border: "border-blue-500/30",
-    badge: "bg-blue-500",
-    text: "text-blue-400",
+    bg: "bg-blue-500/[0.06]",
+    border: "border-blue-500/20",
+    badge: "bg-blue-500/20 text-blue-400",
+    iconColor: "text-blue-400",
+    glow: "hover:shadow-blue-500/[0.04]",
   },
 };
 
@@ -33,25 +36,27 @@ export default function ViolationCard({ violation }: { violation: Violation }) {
 
   return (
     <div
-      className={`rounded-xl border ${config.border} ${config.bg} p-4 transition-all hover:scale-[1.01]`}
+      className={`rounded-xl border ${config.border} ${config.bg} p-4 transition-all duration-200 ${config.glow} hover:shadow-2xl`}
     >
       <div className="flex items-start gap-3">
-        <Icon className={`w-5 h-5 mt-0.5 ${config.text}`} />
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <span className={`text-xs font-bold px-2 py-0.5 rounded-full text-white ${config.badge}`}>
-              {violation.severity.toUpperCase()}
+        <div className="mt-0.5">
+          <Icon className={`w-4.5 h-4.5 ${config.iconColor}`} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${config.badge}`}>
+              {violation.severity}
             </span>
-            <span className="text-sm font-medium text-gray-300">
+            <span className="text-[13px] font-medium text-slate-300 truncate">
               {violation.type.replace(/_/g, " ")}
             </span>
           </div>
-          <p className="text-sm text-gray-400">{violation.description}</p>
-          <div className="flex flex-wrap gap-1.5 mt-2">
+          <p className="text-[12px] text-slate-400 leading-relaxed mb-2.5">{violation.description}</p>
+          <div className="flex flex-wrap gap-1.5">
             {violation.involved_objects.map((obj, i) => (
               <span
                 key={i}
-                className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-gray-400"
+                className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.06] text-slate-500"
               >
                 {obj}
               </span>

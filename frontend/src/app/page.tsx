@@ -11,12 +11,13 @@ import {
   Shield,
   Loader2,
   RotateCcw,
-  Camera,
+  Scan,
   Zap,
   Eye,
   AlertTriangle,
-  Cpu,
   Play,
+  ArrowRight,
+  Github,
 } from "lucide-react";
 
 export default function Home() {
@@ -62,156 +63,179 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0a0a0a]/80 backdrop-blur-xl">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-red-500/20">
-              <Shield className="w-6 h-6 text-red-400" />
+    <div className="min-h-screen bg-[#020617] text-white bg-grain">
+      {/* Ambient glow orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-red-500/[0.04] rounded-full blur-[120px]" />
+        <div className="absolute top-1/2 -left-40 w-80 h-80 bg-blue-500/[0.03] rounded-full blur-[100px]" />
+      </div>
+
+      {/* Navbar */}
+      <header className="sticky top-0 z-50 glass">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3 cursor-pointer" onClick={handleReset}>
+            <div className="relative">
+              <div className="absolute inset-0 bg-red-500/20 rounded-lg blur-md" />
+              <div className="relative p-2 rounded-lg bg-red-500/10 border border-red-500/20">
+                <Shield className="w-5 h-5 text-red-400" />
+              </div>
             </div>
             <div>
-              <h1 className="text-lg font-bold tracking-tight">TrafficGuard AI</h1>
-              <p className="text-xs text-gray-500">YOLOv8 Violation Detection</p>
+              <h1 className="text-sm font-semibold tracking-tight">TrafficGuard AI</h1>
+              <p className="text-[11px] text-slate-500 font-mono">v1.0 / YOLOv8</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+
+          <nav className="flex items-center gap-2">
             <button
               onClick={handleDemo}
-              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-gray-200 border border-white/10 transition"
+              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-slate-200 border border-white/[0.06] hover:border-white/[0.1] transition-all duration-200 cursor-pointer"
             >
               <Play className="w-3 h-3" />
-              Live Demo
+              Demo
             </button>
             <a
-              href="https://github.com"
+              href="https://github.com/Pratyushpad27/ML-Predictor"
               target="_blank"
-              className="text-xs text-gray-500 hover:text-gray-300 transition"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg hover:bg-white/[0.04] text-slate-500 hover:text-slate-300 transition-all duration-200 cursor-pointer"
             >
-              GitHub
+              <Github className="w-3.5 h-3.5" />
+              Source
             </a>
-          </div>
+          </nav>
         </div>
       </header>
 
-      {/* Hero */}
-      <div className="max-w-5xl mx-auto px-6 pt-12 pb-8">
-        {!result && (
-          <>
-            <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium mb-4">
-                <Camera className="w-3.5 h-3.5" />
-                AI-Powered Detection
+      <main className="relative z-10">
+        <div className="max-w-6xl mx-auto px-6">
+          {/* Hero Section */}
+          {!result && !isLoading && (
+            <section className="pt-20 pb-16 animate-fade-in">
+              <div className="max-w-2xl mx-auto text-center">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/[0.08] border border-red-500/20 text-red-400 text-xs font-medium mb-6">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+                  Computer Vision
+                </div>
+
+                <h2 className="text-4xl md:text-[3.25rem] font-bold tracking-tight leading-[1.1] mb-5">
+                  <span className="text-gradient">Detect Traffic Violations</span>
+                  <br />
+                  <span className="text-slate-500">from Dashcam Images</span>
+                </h2>
+
+                <p className="text-base text-slate-400 leading-relaxed max-w-lg mx-auto mb-10">
+                  Upload a dashcam photo and let our YOLOv8 model identify vehicles,
+                  traffic signs, and flag potential violations instantly.
+                </p>
+
+                {/* Feature cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-12 stagger-children">
+                  <FeatureCard
+                    icon={<Eye className="w-4.5 h-4.5 text-blue-400" />}
+                    title="23 Object Classes"
+                    description="Vehicles, signs, lights, pedestrians"
+                    accent="blue"
+                  />
+                  <FeatureCard
+                    icon={<AlertTriangle className="w-4.5 h-4.5 text-red-400" />}
+                    title="Violation Detection"
+                    description="Red light, no-entry, speed zones"
+                    accent="red"
+                  />
+                  <FeatureCard
+                    icon={<Zap className="w-4.5 h-4.5 text-amber-400" />}
+                    title="Real-Time Inference"
+                    description="Fast YOLOv8 object detection"
+                    accent="amber"
+                  />
+                </div>
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-                Detect Traffic Violations
-                <br />
-                <span className="text-gray-500">from Dashcam Images</span>
-              </h2>
-              <p className="text-gray-500 max-w-lg mx-auto">
-                Upload a dashcam photo and our YOLOv8 model will detect vehicles,
-                traffic signs, and flag potential violations in real-time.
-              </p>
-            </div>
 
-            {/* Feature Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-              <FeatureCard
-                icon={<Eye className="w-5 h-5 text-blue-400" />}
-                title="23-Class Detection"
-                description="Detects vehicles, traffic lights, speed signs, pedestrians, and more"
-              />
-              <FeatureCard
-                icon={<AlertTriangle className="w-5 h-5 text-red-400" />}
-                title="Violation Flagging"
-                description="Red light running, no-entry, pedestrian risk, and speed zone alerts"
-              />
-              <FeatureCard
-                icon={<Zap className="w-5 h-5 text-yellow-400" />}
-                title="Real-Time Analysis"
-                description="Powered by YOLOv8 for fast, accurate object detection"
-              />
-            </div>
-          </>
-        )}
+              {/* Upload area */}
+              <div className="max-w-2xl mx-auto">
+                <ImageUploader onFileSelect={handleFileSelect} isLoading={isLoading} />
 
-        {/* Upload + Results */}
-        <div className="space-y-6">
-          {!result && <ImageUploader onFileSelect={handleFileSelect} isLoading={isLoading} />}
+                {file && (
+                  <div className="mt-4 animate-fade-in">
+                    <button
+                      onClick={handleAnalyze}
+                      className="w-full flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-red-500 hover:bg-red-600 font-medium transition-all duration-200 text-white glow-red cursor-pointer group"
+                    >
+                      <Scan className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
+                      Analyze Image
+                      <ArrowRight className="w-4 h-4 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all duration-200" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
 
+          {/* Loading */}
+          {isLoading && (
+            <section className="pt-16 pb-16 max-w-2xl mx-auto animate-fade-in">
+              <AnalysisSkeleton />
+            </section>
+          )}
+
+          {/* Error */}
           {error && (
-            <div className="rounded-xl bg-red-500/10 border border-red-500/20 p-4 text-sm text-red-400">
+            <div className="max-w-2xl mx-auto mt-4 rounded-xl bg-red-500/[0.08] border border-red-500/20 p-4 text-sm text-red-400 animate-fade-in-scale">
               {error}
             </div>
           )}
 
-          {!result && file && !isLoading && (
-            <div className="flex gap-3">
-              <button
-                onClick={handleAnalyze}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-red-500 hover:bg-red-600 font-medium transition text-white"
-              >
-                <Shield className="w-5 h-5" />
-                Analyze Image
-              </button>
-            </div>
-          )}
-
-          {isLoading && <AnalysisSkeleton />}
-
+          {/* Results */}
           {result && (
-            <>
-              <div className="flex items-center justify-between">
+            <section className="pt-8 pb-16 animate-fade-in">
+              <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <h2 className="text-xl font-bold">Analysis Results</h2>
+                  <h2 className="text-xl font-semibold tracking-tight">Analysis Results</h2>
                   {isDemo && (
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
-                      Demo Data
+                    <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                      DEMO
                     </span>
                   )}
                 </div>
                 <button
                   onClick={handleReset}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-sm text-gray-300 transition"
+                  className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-xs text-slate-400 hover:text-slate-200 border border-white/[0.06] hover:border-white/[0.1] transition-all duration-200 cursor-pointer"
                 >
-                  <RotateCcw className="w-4 h-4" />
+                  <RotateCcw className="w-3.5 h-3.5" />
                   New Analysis
                 </button>
               </div>
               <ResultsPanel result={result} />
-            </>
+            </section>
+          )}
+
+          {/* Tech Stack (only on landing) */}
+          {!result && !isLoading && (
+            <section className="border-t border-white/[0.04] py-16 animate-fade-in" style={{ animationDelay: "400ms" }}>
+              <p className="text-[11px] font-mono text-slate-600 uppercase tracking-widest mb-6 text-center">
+                Built with
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-8 text-slate-500">
+                {["YOLOv8", "FastAPI", "Next.js", "Tailwind CSS", "Google Cloud"].map((tech) => (
+                  <span key={tech} className="text-sm font-medium hover:text-slate-300 transition-colors duration-200 cursor-default">
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </section>
           )}
         </div>
-      </div>
-
-      {/* Tech Stack Section */}
-      {!result && (
-        <section className="border-t border-white/10 mt-16">
-          <div className="max-w-5xl mx-auto px-6 py-16">
-            <div className="flex items-center gap-2 mb-8">
-              <Cpu className="w-5 h-5 text-gray-500" />
-              <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
-                Built With
-              </h3>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <TechBadge name="YOLOv8" detail="Object Detection" />
-              <TechBadge name="FastAPI" detail="Backend API" />
-              <TechBadge name="Next.js" detail="Frontend" />
-              <TechBadge name="Google Cloud" detail="Deployment" />
-            </div>
-          </div>
-        </section>
-      )}
+      </main>
 
       {/* Footer */}
-      <footer className="mt-auto border-t border-white/10 py-6">
-        <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between text-xs text-gray-600 gap-2">
-          <p>Built with YOLOv8, FastAPI, and Next.js</p>
-          <p>TrafficGuard AI - Traffic Violation Detection System</p>
+      <footer className="relative z-10 border-t border-white/[0.04] py-5">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between text-[11px] text-slate-600 gap-2">
+          <p>TrafficGuard AI</p>
+          <p className="font-mono">YOLOv8 + FastAPI + Next.js</p>
         </div>
       </footer>
-    </main>
+    </div>
   );
 }
 
@@ -219,25 +243,24 @@ function FeatureCard({
   icon,
   title,
   description,
+  accent,
 }: {
   icon: React.ReactNode;
   title: string;
   description: string;
+  accent: "blue" | "red" | "amber";
 }) {
-  return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5 hover:bg-white/[0.05] transition">
-      <div className="mb-3">{icon}</div>
-      <h3 className="font-semibold text-sm text-gray-200 mb-1">{title}</h3>
-      <p className="text-xs text-gray-500 leading-relaxed">{description}</p>
-    </div>
-  );
-}
+  const glowMap = {
+    blue: "group-hover:shadow-blue-500/[0.06]",
+    red: "group-hover:shadow-red-500/[0.06]",
+    amber: "group-hover:shadow-amber-500/[0.06]",
+  };
 
-function TechBadge({ name, detail }: { name: string; detail: string }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-center hover:bg-white/[0.05] transition">
-      <p className="font-semibold text-sm text-gray-200">{name}</p>
-      <p className="text-xs text-gray-500">{detail}</p>
+    <div className={`group rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 text-left hover:bg-white/[0.04] hover:border-white/[0.1] transition-all duration-200 cursor-default ${glowMap[accent]} hover:shadow-2xl`}>
+      <div className="mb-2.5">{icon}</div>
+      <h3 className="font-medium text-[13px] text-slate-200 mb-1">{title}</h3>
+      <p className="text-[12px] text-slate-500 leading-relaxed">{description}</p>
     </div>
   );
 }
