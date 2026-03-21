@@ -2,7 +2,7 @@ from fastapi import APIRouter, UploadFile, File, HTTPException
 
 from config import MAX_IMAGE_SIZE
 from models.schemas import DetectionResponse
-from services.detector import detect
+from services.detector import detect, is_model_loaded
 from services.violation_rules import check_violations
 from services.annotator import annotate_image
 
@@ -13,6 +13,13 @@ ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp"}
 
 @router.post("/detect", response_model=DetectionResponse)
 async def detect_violations(file: UploadFile = File(...)):
+    if not is_model_loaded():
+        raise HTTPException(
+            503,
+            "Model not loaded. Train a model first (python model/train.py) "
+            "and place best.pt in model/best.pt, then restart the server."
+        )
+
     if file.content_type not in ALLOWED_TYPES:
         raise HTTPException(400, f"File type {file.content_type} not supported. Use JPEG, PNG, or WebP.")
 

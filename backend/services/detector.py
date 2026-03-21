@@ -32,9 +32,16 @@ def load_model():
     return _model
 
 
+def is_model_loaded() -> bool:
+    return _model is not None
+
+
 def get_model() -> YOLO:
     if _model is None:
-        raise RuntimeError("Model not loaded. Call load_model() first.")
+        raise RuntimeError(
+            "Model not loaded. Train a model first with: python model/train.py, "
+            "then copy best.pt to model/best.pt and restart the server."
+        )
     return _model
 
 

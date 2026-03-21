@@ -1,15 +1,22 @@
+import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from routers import detection, health
 from services.detector import load_model
+from config import MODEL_PATH
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    load_model()
-    print("Model loaded and ready.")
+    if os.path.exists(MODEL_PATH):
+        load_model()
+        print(f"Model loaded from {MODEL_PATH}")
+    else:
+        print(f"WARNING: Model not found at {MODEL_PATH}")
+        print("The /api/detect endpoint will return an error until a model is available.")
+        print("Train a model with: python model/train.py")
     yield
 
 
