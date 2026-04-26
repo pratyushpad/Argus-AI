@@ -38,3 +38,6 @@ labels/
 # Skills and tools
 .claude/
 ui-ux-pro-max-skill-main/
+
+# HuggingFace Space (separate repo, deployed independently)
+hf-space/
