@@ -7,7 +7,7 @@ import argparse
 import os
 
 
-def train(data_yaml: str, epochs: int = 100, batch: int = 16, imgsz: int = 640):
+def train(data_yaml: str, epochs: int = 80, batch: int = 16, imgsz: int = 640):
     model = YOLO("yolov8s.pt")
 
     results = model.train(
@@ -43,7 +43,7 @@ def train(data_yaml: str, epochs: int = 100, batch: int = 16, imgsz: int = 640):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", default="model/data.yaml", help="Path to data.yaml")
-    parser.add_argument("--epochs", type=int, default=100)
+    parser.add_argument("--epochs", type=int, default=80)
     parser.add_argument("--batch", type=int, default=16)
     parser.add_argument("--imgsz", type=int, default=640)
     args = parser.parse_args()

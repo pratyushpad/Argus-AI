@@ -1,463 +1,369 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import ImageUploader from "@/components/ImageUploader";
-import ResultsPanel from "@/components/ResultsPanel";
-import AnalysisSkeleton from "@/components/AnalysisSkeleton";
-import AnimatedBackground from "@/components/AnimatedBackground";
-import FloatingOrb from "@/components/FloatingOrb";
-import TextReveal from "@/components/TextReveal";
-import AnimatedCounter from "@/components/AnimatedCounter";
-import GlowingCard from "@/components/ui/GlowingCard";
-import Meteors from "@/components/ui/Meteors";
-import GridBeam from "@/components/ui/GridBeam";
-import LampEffect from "@/components/ui/LampEffect";
-import BentoGrid from "@/components/ui/BentoGrid";
-import MovingBorder from "@/components/ui/MovingBorder";
-import { detectViolations } from "@/lib/api";
-import { DEMO_RESULT } from "@/lib/demo-data";
-import { DetectionResponse } from "@/types/detection";
+import Link from "next/link";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import {
-  Shield,
-  RotateCcw,
-  Scan,
-  Zap,
-  Eye,
-  AlertTriangle,
-  Play,
   ArrowRight,
-  Github,
   Radar,
-  Car,
-  Activity,
-  Camera,
-  MapPin,
-  Gauge,
-  Users,
-  Layers,
-  Cpu,
+  ScanSearch,
+  Shield,
+  History,
+  ChartColumn,
+  Workflow,
+  FileSearch,
+  Settings2,
 } from "lucide-react";
+import MarketingHeader from "@/components/MarketingHeader";
+import MarketingFooter from "@/components/MarketingFooter";
+import TrafficScene from "@/components/TrafficScene";
+import { HeroGeometric } from "@/components/ui/elegant-shape";
+import { Spotlight } from "@/components/ui/spotlight";
+import { Marquee } from "@/components/ui/marquee";
+import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { MagicCard } from "@/components/ui/magic-card";
+import { NumberTicker } from "@/components/ui/number-ticker";
 
-export default function Home() {
-  const [file, setFile] = useState<File | null>(null);
-  const [result, setResult] = useState<DetectionResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isDemo, setIsDemo] = useState(false);
+const DETECTION_CLASSES = [
+  "car", "truck", "bus", "motorcycle", "bicycle", "person", "traffic light",
+  "stop sign", "yield sign", "speed limit", "no entry", "pedestrian crossing",
+  "school zone", "construction", "lane marking", "fire hydrant", "parking meter",
+  "bench", "rail", "trailer", "ambulance", "police", "delivery van",
+];
 
-  const handleFileSelect = (f: File) => {
-    setFile(f);
-    setResult(null);
-    setError(null);
-    setIsDemo(false);
-  };
+const FEATURE_PANELS = [
+  {
+    title: "Real detection workspace",
+    body: "Upload a frame, run YOLOv8 inference, inspect every object, and export the annotated result without leaving the app.",
+    icon: ScanSearch,
+  },
+  {
+    title: "Structured violation engine",
+    body: "Detections are cross-checked through rule logic so results read like an operational review, not a demo overlay.",
+    icon: Shield,
+  },
+  {
+    title: "Persistent review trail",
+    body: "Every run can be saved to local history, revisited in analytics, and exported for handoff or audit.",
+    icon: History,
+  },
+];
 
-  const handleAnalyze = async () => {
-    if (!file) return;
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await detectViolations(file);
-      setResult(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+const SYSTEM_STRIPS = [
+  { label: "Detection classes", value: "23", detail: "vehicles, signs, signals, pedestrians" },
+  { label: "Inference target", value: "<35ms", detail: "GPU path for responsive review" },
+  { label: "Dataset coverage", value: "5,254", detail: "labeled dashcam training images" },
+  { label: "Workspace pages", value: "4", detail: "detection, history, analytics, settings" },
+];
 
-  const handleDemo = () => {
-    setIsDemo(true);
-    setFile(null);
-    setError(null);
-    setResult(DEMO_RESULT);
-  };
+const PAGE_LINKS = [
+  {
+    href: "/platform",
+    title: "System page",
+    eyebrow: "Detailed product spec",
+    copy: "Breaks down the model pipeline, rule engine, outputs, classes, and operating instructions.",
+  },
+  {
+    href: "/analyze",
+    title: "Detection workspace",
+    eyebrow: "Functional application",
+    copy: "Upload frames, run detection, review history and analytics — all in one consistent product shell.",
+  },
+];
 
-  const handleReset = () => {
-    setFile(null);
-    setResult(null);
-    setError(null);
-    setIsDemo(false);
-  };
+const RUNBOOK = [
+  { step: "01", title: "Upload", text: "Drop a JPG, PNG, or WebP frame into the detection workspace." },
+  { step: "02", title: "Review", text: "Inspect annotated output, confidence values, and rule-level findings." },
+  { step: "03", title: "Track", text: "Saved analyses appear inside history and feed the analytics layer." },
+  { step: "04", title: "Tune", text: "Preferences control autosave behavior and completion notifications." },
+];
+
+const HERO_SIGNAL_CARDS = [
+  { label: "Inference", value: "32ms", detail: "responsive review loop" },
+  { label: "Rules", value: "8+", detail: "scene logic checks" },
+  { label: "Archive", value: "local", detail: "history and analytics" },
+];
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="inline-flex items-center gap-2 rounded-[6px] border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[0.68rem] uppercase tracking-[0.28em] text-white/42">
+      <span className="h-1.5 w-1.5 rounded-full bg-[#3b82f6]" />
+      {children}
+    </div>
+  );
+}
+
+export default function HomePage() {
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "16%"]);
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white">
-      <AnimatedBackground />
-      <Meteors count={15} />
+    <div className="min-h-screen bg-black text-white">
+      <MarketingHeader />
 
-      {/* Floating Orbs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <FloatingOrb color="rgba(239,68,68,0.07)" size={500} top="-15%" right="-10%" delay={0} />
-        <FloatingOrb color="rgba(59,130,246,0.05)" size={400} top="50%" left="-10%" delay={4} />
-        <FloatingOrb color="rgba(168,85,247,0.04)" size={350} bottom="-10%" right="15%" delay={8} />
-      </div>
+      <main>
+        {/* Hero — two columns, calm, no gradient text */}
+        <section
+          ref={heroRef}
+          className="relative overflow-hidden border-b border-white/8"
+        >
+          <div className="pointer-events-none absolute inset-0 gradient-mesh-soft" />
+          <div className="pointer-events-none absolute inset-0 bg-dot-grid bg-dot-grid-fade opacity-50" />
 
-      {/* ============ NAVBAR ============ */}
-      <motion.header
-        initial={{ y: -30, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="sticky top-0 z-50 glass"
-      >
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <motion.div
-            className="flex items-center gap-3 cursor-pointer"
-            onClick={handleReset}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <div className="relative">
+          <div className="relative mx-auto grid max-w-7xl gap-16 px-6 py-24 sm:px-8 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:py-28">
+            <motion.div
+              style={{ y: heroY }}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <SectionLabel>Computer vision for road evidence</SectionLabel>
+
+              <h1 className="mt-7 max-w-3xl font-display text-[clamp(2.8rem,6.4vw,5.6rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-white">
+                A focused interface
+                <br className="hidden sm:block" /> for traffic detection.
+              </h1>
+
+              <p className="mt-6 max-w-xl text-base leading-7 text-white/55 sm:text-[1.05rem]">
+                Upload a dashcam frame, run YOLOv8 inference, and review every detected
+                object and traffic violation in one workspace built for review — not a demo.
+              </p>
+
+              <div className="mt-9 flex flex-wrap items-center gap-3">
+                <Link href="/analyze" className="btn-indigo text-sm">
+                  Start detecting
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href="/platform"
+                  className="text-sm text-white/55 transition-colors hover:text-white"
+                >
+                  See how it works →
+                </Link>
+              </div>
+
+              <div className="mt-12 grid max-w-lg gap-3 sm:grid-cols-2">
+                <div className="rounded-[10px] border border-white/8 bg-white/[0.02] px-5 py-4">
+                  <p className="text-[0.68rem] uppercase tracking-[0.24em] text-white/35">Detection classes</p>
+                  <p className="mt-2 font-display text-3xl font-semibold text-white">23</p>
+                  <p className="mt-1 text-xs leading-5 text-white/40">vehicles, signs, signals, pedestrians</p>
+                </div>
+                <div className="rounded-[10px] border border-white/8 bg-white/[0.02] px-5 py-4">
+                  <p className="text-[0.68rem] uppercase tracking-[0.24em] text-white/35">Inference target</p>
+                  <p className="mt-2 font-display text-3xl font-semibold text-white">&lt;35ms</p>
+                  <p className="mt-1 text-xs leading-5 text-white/40">GPU path for responsive review</p>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              className="rounded-[14px] border border-white/10 bg-white/[0.02] p-3 shadow-[0_30px_120px_rgba(0,0,0,0.55)]"
+            >
+              <div className="mb-3 flex items-center justify-between rounded-[8px] border border-white/8 bg-black px-4 py-3 text-[0.68rem] uppercase tracking-[0.24em] text-white/40">
+                <span>Live simulation</span>
+                <span className="inline-flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-blue-400 shadow-[0_0_10px_rgba(59,130,246,0.7)]" />
+                  realtime overlay
+                </span>
+              </div>
+              <div className="overflow-hidden rounded-[10px] border border-white/8">
+                <TrafficScene />
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Class marquee */}
+        <section className="border-b border-white/8 bg-black/60 py-6">
+          <div className="mx-auto max-w-[1400px] px-5 sm:px-8">
+            <div className="mb-3 flex items-center justify-between">
+              <p className="text-[0.65rem] uppercase tracking-[0.28em] text-white/30">Detection vocabulary</p>
+              <p className="text-xs text-white/30"><NumberTicker value={23} /> classes · YOLOv8</p>
+            </div>
+            <Marquee>
+              {DETECTION_CLASSES.map((cls) => (
+                <span
+                  key={cls}
+                  className="inline-flex shrink-0 items-center gap-2 rounded-full border border-white/8 bg-white/[0.03] px-4 py-1.5 text-sm text-white/65"
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#3b82f6]" />
+                  {cls}
+                </span>
+              ))}
+            </Marquee>
+          </div>
+        </section>
+
+        <section className="border-b border-white/8">
+          <div className="mx-auto grid max-w-7xl gap-0 px-5 sm:px-8 lg:grid-cols-3">
+            {FEATURE_PANELS.map(({ title, body, icon: Icon }, index) => (
               <motion.div
-                className="absolute inset-0 bg-red-500/40 rounded-xl blur-xl"
-                animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2] }}
-                transition={{ duration: 3, repeat: Infinity }}
-              />
-              <div className="relative p-2.5 rounded-xl bg-red-500/10 border border-red-500/20">
-                <Shield className="w-4 h-4 text-red-400" />
+                key={title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.5, delay: index * 0.08 }}
+                className="group border-b border-white/8 py-8 last:border-b-0 lg:border-b-0 lg:border-r lg:px-6 lg:py-14 last:lg:border-r-0"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-[8px] border border-white/10 bg-white/[0.03] text-white transition-colors group-hover:bg-white group-hover:text-black">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h2 className="mt-6 font-display text-3xl leading-tight text-white">{title}</h2>
+                <p className="mt-4 max-w-md text-sm leading-7 text-white/48">{body}</p>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        <section className="border-b border-white/8 py-32">
+          <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[0.75fr_1.25fr]">
+            <div>
+              <SectionLabel>System framing</SectionLabel>
+              <h2 className="mt-6 font-display text-[clamp(2.2rem,4vw,4.8rem)] leading-[0.95] tracking-[-0.05em] text-white">
+                Designed like
+                <br />
+                a product, not
+                <br />
+                a prompt output.
+              </h2>
+              <p className="mt-5 max-w-md text-base leading-7 text-white/50">
+                The new layout borrows the editorial pacing, big type, and spatial grid
+                you referenced, while keeping the interface monochrome with only small
+                purple signal accents.
+              </p>
+            </div>
+
+            <div className="grid gap-5 lg:grid-cols-2">
+              {SYSTEM_STRIPS.map((item, index) => {
+                const numeric = item.value.match(/\d+/);
+                const num = numeric ? parseInt(numeric[0]) : null;
+                const before = numeric ? item.value.slice(0, item.value.indexOf(numeric[0])) : "";
+                const after = numeric ? item.value.slice(item.value.indexOf(numeric[0]) + numeric[0].length) : "";
+                return (
+                  <motion.div
+                    key={item.label}
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-80px" }}
+                    transition={{ delay: index * 0.06 }}
+                  >
+                    <MagicCard className="p-6">
+                      <p className="text-[0.68rem] uppercase tracking-[0.28em] text-white/30">{item.label}</p>
+                      <p className="mt-4 font-display text-5xl leading-none text-white">
+                        {num !== null ? <>{before}<NumberTicker value={num} />{after}</> : item.value}
+                      </p>
+                      <p className="mt-4 text-sm leading-7 text-white/48">{item.detail}</p>
+                    </MagicCard>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-white/8 py-32">
+          <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[0.95fr_1.05fr]">
+            <div className="rounded-[12px] border border-white/10 bg-white/[0.03] p-6">
+              <div className="flex items-center justify-between">
+                <SectionLabel>Working flow</SectionLabel>
+                <Workflow className="h-5 w-5 text-white/26" />
+              </div>
+              <div className="mt-8 space-y-4">
+                {RUNBOOK.map((item) => (
+                  <div key={item.step} className="rounded-[8px] border border-white/8 bg-black/45 p-4">
+                    <div className="flex items-center gap-3">
+                      <span className="font-mono text-xs tracking-[0.22em] text-[#3b82f6]">{item.step}</span>
+                      <h3 className="font-display text-2xl text-white">{item.title}</h3>
+                    </div>
+                    <p className="mt-3 max-w-md text-sm leading-7 text-white/48">{item.text}</p>
+                  </div>
+                ))}
               </div>
             </div>
-            <div>
-              <h1 className="text-sm font-bold tracking-tight">TrafficGuard AI</h1>
-              <p className="text-[9px] text-slate-500 font-mono tracking-[0.15em] uppercase">Computer Vision</p>
-            </div>
-          </motion.div>
 
-          <nav className="flex items-center gap-2">
-            <MovingBorder duration={3000} className="rounded-xl">
-              <motion.button
-                onClick={handleDemo}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-1.5 text-xs px-4 py-2 text-slate-300 hover:text-white transition-colors cursor-pointer"
-              >
-                <Play className="w-3 h-3 fill-current" />
-                Live Demo
-              </motion.button>
-            </MovingBorder>
-            <motion.a
-              href="https://github.com/Pratyushpad27/ML-Predictor"
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              whileTap={{ scale: 0.9 }}
-              className="p-2.5 rounded-xl hover:bg-white/[0.04] text-slate-500 hover:text-white transition-colors cursor-pointer"
-            >
-              <Github className="w-4 h-4" />
-            </motion.a>
-          </nav>
-        </div>
-      </motion.header>
-
-      <main className="relative z-10">
-        <div className="max-w-6xl mx-auto px-6">
-          <AnimatePresence mode="wait">
-            {/* ============ HERO ============ */}
-            {!result && !isLoading && (
-              <motion.div
-                key="hero"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0, y: -30 }}
-              >
-                {/* LAMP + HEADLINE */}
-                <section className="pt-20 pb-8 relative">
-                  <GridBeam />
-                  <LampEffect>
-                    <div className="text-center max-w-3xl mx-auto">
-                      {/* Badge */}
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                      >
-                        <MovingBorder duration={5000} className="inline-flex rounded-full mb-8">
-                          <div className="flex items-center gap-2.5 px-5 py-2">
-                            <motion.span
-                              className="w-2 h-2 rounded-full bg-red-400"
-                              animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
-                              transition={{ duration: 2, repeat: Infinity }}
-                            />
-                            <span className="text-red-400/90 text-xs font-medium tracking-wide">POWERED BY YOLOv8</span>
-                          </div>
-                        </MovingBorder>
-                      </motion.div>
-
-                      {/* Title */}
-                      <h2 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.05] mb-6">
-                        <TextReveal text="Detect Traffic" className="text-glow" delay={0.3} />
-                        <br />
-                        <TextReveal text="Violations Instantly" className="text-slate-500" delay={0.6} />
-                      </h2>
-
-                      <motion.p
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 1, duration: 0.7 }}
-                        className="text-base md:text-lg text-slate-400/80 leading-relaxed max-w-xl mx-auto mb-12"
-                      >
-                        Upload a dashcam image. Our AI identifies vehicles, traffic signs,
-                        and pedestrians — then flags violations in real time.
-                      </motion.p>
-                    </div>
-                  </LampEffect>
-
-                  {/* Stats */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.2 }}
-                    className="flex items-center justify-center gap-8 md:gap-16 mb-16"
-                  >
-                    {[
-                      { val: 23, label: "CLASSES", suffix: "" },
-                      { val: 5254, label: "IMAGES", suffix: "" },
-                      { val: 8, label: "RULES", suffix: "+" },
-                    ].map((stat, i) => (
-                      <div key={stat.label} className="text-center">
-                        <AnimatedCounter
-                          value={stat.val}
-                          suffix={stat.suffix}
-                          className="text-3xl md:text-4xl font-bold text-white font-mono"
-                        />
-                        <p className="text-[10px] text-slate-600 mt-1 tracking-[0.2em]">{stat.label}</p>
-                      </div>
-                    ))}
-                  </motion.div>
-                </section>
-
-                {/* ============ BENTO FEATURES ============ */}
-                <section className="pb-16">
-                  <BentoGrid
-                    items={[
-                      {
-                        title: "Object Detection",
-                        description: "YOLOv8 detects 23 classes — cars, trucks, motorcycles, pedestrians, traffic lights, and 18 types of signs",
-                        icon: <Radar className="w-5 h-5 text-red-400" />,
-                        className: "md:col-span-2 md:row-span-2",
-                        visual: (
-                          <div className="flex flex-wrap gap-1.5 mt-2">
-                            {["car", "truck", "person", "red light", "stop sign", "speed limit", "motorcycle", "+16 more"].map((cls) => (
-                              <span key={cls} className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.06] text-slate-500">
-                                {cls}
-                              </span>
-                            ))}
-                          </div>
-                        ),
-                      },
-                      {
-                        title: "Red Light Detection",
-                        description: "Flags vehicles near red traffic lights with high severity",
-                        icon: <AlertTriangle className="w-5 h-5 text-red-400" />,
-                        visual: (
-                          <div className="flex items-center gap-1.5">
-                            <span className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
-                            <span className="text-[10px] font-mono text-red-400">HIGH SEVERITY</span>
-                          </div>
-                        ),
-                      },
-                      {
-                        title: "Pedestrian Safety",
-                        description: "Alerts when people are in close proximity to vehicles",
-                        icon: <Users className="w-5 h-5 text-amber-400" />,
-                        visual: (
-                          <div className="flex items-center gap-1.5">
-                            <span className="w-3 h-3 rounded-full bg-amber-500 animate-pulse" />
-                            <span className="text-[10px] font-mono text-amber-400">PROXIMITY ALERT</span>
-                          </div>
-                        ),
-                      },
-                      {
-                        title: "Speed Zones",
-                        description: "Identifies vehicles in speed limit areas (20-120 km/h)",
-                        icon: <Gauge className="w-5 h-5 text-blue-400" />,
-                      },
-                      {
-                        title: "Sign Recognition",
-                        description: "No-entry, no-turn, no-stopping, no-overtaking, and more",
-                        icon: <MapPin className="w-5 h-5 text-purple-400" />,
-                      },
-                      {
-                        title: "Annotated Results",
-                        description: "Color-coded bounding boxes with violation severity and downloadable output",
-                        icon: <Layers className="w-5 h-5 text-emerald-400" />,
-                      },
-                    ]}
-                  />
-                </section>
-
-                {/* ============ UPLOAD ============ */}
-                <section className="pb-20 relative">
-                  <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="max-w-2xl mx-auto"
-                  >
-                    <div className="text-center mb-8">
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
-                        className="inline-flex items-center gap-2 text-[11px] font-mono text-slate-500 uppercase tracking-[0.15em] mb-2"
-                      >
-                        <Camera className="w-3.5 h-3.5" />
-                        Upload & Analyze
-                      </motion.div>
-                    </div>
-
-                    <ImageUploader onFileSelect={handleFileSelect} isLoading={isLoading} />
-
-                    {file && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="mt-5"
-                      >
-                        <motion.button
-                          onClick={handleAnalyze}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.97 }}
-                          className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl font-medium text-white cursor-pointer group relative overflow-hidden"
-                          style={{
-                            background: "linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f87171 100%)",
-                            boxShadow: "0 0 50px -12px rgba(239, 68, 68, 0.5), inset 0 1px 0 rgba(255,255,255,0.1)",
-                          }}
-                        >
-                          {/* Shine effect */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                          <Scan className="w-5 h-5 transition-transform duration-300 group-hover:rotate-90 relative z-10" />
-                          <span className="relative z-10">Analyze Image</span>
-                          <ArrowRight className="w-4 h-4 opacity-0 -ml-3 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 relative z-10" />
-                        </motion.button>
-                      </motion.div>
-                    )}
-                  </motion.div>
-                </section>
-
-                {/* ============ TECH STACK ============ */}
-                <section className="border-t border-white/[0.04] py-24 relative overflow-hidden">
-                  <div className="absolute inset-0 animate-aurora opacity-30" />
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    className="relative z-10"
-                  >
-                    <p className="text-[10px] font-mono text-slate-600 uppercase tracking-[0.25em] mb-10 text-center">
-                      Technology Stack
-                    </p>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
-                      {[
-                        { name: "YOLOv8", sub: "Object Detection", icon: <Radar className="w-5 h-5" /> },
-                        { name: "FastAPI", sub: "Python Backend", icon: <Zap className="w-5 h-5" /> },
-                        { name: "Next.js", sub: "React Frontend", icon: <Layers className="w-5 h-5" /> },
-                        { name: "Google Cloud", sub: "Deployment", icon: <Cpu className="w-5 h-5" /> },
-                      ].map((tech, i) => (
-                        <motion.div
-                          key={tech.name}
-                          initial={{ opacity: 0, y: 20 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: i * 0.1 }}
-                        >
-                          <GlowingCard glowColor="rgba(255,255,255,0.06)">
-                            <div className="p-5 text-center">
-                              <div className="text-slate-500 flex justify-center mb-3 animate-float" style={{ animationDelay: `${i * 0.5}s` }}>
-                                {tech.icon}
-                              </div>
-                              <p className="font-semibold text-sm text-slate-200">{tech.name}</p>
-                              <p className="text-[11px] text-slate-600 mt-0.5">{tech.sub}</p>
-                            </div>
-                          </GlowingCard>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </motion.div>
-                </section>
-              </motion.div>
-            )}
-
-            {/* ============ LOADING ============ */}
-            {isLoading && (
-              <motion.section
-                key="loading"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="pt-20 pb-16 max-w-2xl mx-auto"
-              >
-                <AnalysisSkeleton />
-              </motion.section>
-            )}
-
-            {/* ============ RESULTS ============ */}
-            {result && (
-              <motion.section
-                key="results"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                className="pt-10 pb-16"
-              >
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-3">
-                    <motion.div
-                      initial={{ scale: 0, rotate: -180 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      transition={{ type: "spring", stiffness: 200, damping: 12 }}
-                      className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20"
+            <div className="grid gap-5">
+              <div className="rounded-[12px] border border-white/10 bg-white/[0.03] p-6">
+                <div className="flex flex-wrap gap-3">
+                  {[
+                    { label: "Detector", icon: Radar },
+                    { label: "Rule logic", icon: FileSearch },
+                    { label: "Analytics", icon: ChartColumn },
+                    { label: "Preferences", icon: Settings2 },
+                  ].map(({ label, icon: Icon }) => (
+                    <div
+                      key={label}
+                      className="inline-flex items-center gap-2 rounded-[6px] border border-white/10 bg-black/45 px-4 py-2 text-sm text-white/58"
                     >
-                      <Eye className="w-5 h-5 text-emerald-400" />
-                    </motion.div>
-                    <div>
-                      <h2 className="text-xl font-bold tracking-tight">Analysis Complete</h2>
-                      {isDemo && (
-                        <span className="text-[9px] font-mono text-amber-400/80 uppercase tracking-[0.2em]">Demo Data</span>
-                      )}
+                      <Icon className="h-4 w-4" />
+                      {label}
                     </div>
-                  </div>
-                  <MovingBorder duration={4000} className="rounded-xl">
-                    <motion.button
-                      onClick={handleReset}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="flex items-center gap-2 px-4 py-2.5 text-xs text-slate-400 hover:text-white transition-colors cursor-pointer"
-                    >
-                      <RotateCcw className="w-3.5 h-3.5" />
-                      New Analysis
-                    </motion.button>
-                  </MovingBorder>
+                  ))}
                 </div>
-                <ResultsPanel result={result} />
-              </motion.section>
-            )}
-          </AnimatePresence>
+                <h3 className="mt-8 font-display text-4xl leading-tight text-white">
+                  Each page now has a purpose inside the product journey.
+                </h3>
+                <p className="mt-4 max-w-xl text-sm leading-7 text-white/48">
+                  The landing page explains why the product exists, the system page
+                  explains how it works, and the workspace pages handle actual analysis
+                  and review. That split makes the app feel intentional rather than
+                  visually repetitive.
+                </p>
+              </div>
 
-          {/* Error */}
-          <AnimatePresence>
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="max-w-2xl mx-auto mt-4 rounded-2xl bg-red-500/[0.06] border border-red-500/20 p-5 text-sm text-red-400"
-              >
-                {error}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+              <div className="grid gap-5 md:grid-cols-2">
+                {PAGE_LINKS.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="group rounded-[10px] border border-white/10 bg-white/[0.03] p-6 transition-colors hover:border-white/20 hover:bg-white/[0.05]"
+                  >
+                    <p className="text-[0.68rem] uppercase tracking-[0.28em] text-white/30">{item.eyebrow}</p>
+                    <h3 className="mt-4 font-display text-3xl text-white">{item.title}</h3>
+                    <p className="mt-4 text-sm leading-7 text-white/48">{item.copy}</p>
+                    <div className="mt-8 inline-flex items-center gap-2 text-sm text-white/72">
+                      Open page
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-32">
+          <div className="mx-auto max-w-5xl px-5 text-center sm:px-8">
+            <SectionLabel>Ready to use</SectionLabel>
+            <h2 className="mt-6 font-display text-[clamp(2.5rem,5vw,5.5rem)] leading-[0.94] tracking-[-0.05em] text-white">
+              Open the workspace.
+              <br />
+              Run a detection.
+            </h2>
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-white/50">
+              Built to be used, not just viewed. Open the detection workspace and run
+              your first scan in under a minute.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Link href="/analyze" className="btn-indigo">
+                Open workspace
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link href="/platform" className="btn-ghost-framer">
+                Read how it works
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
 
-      <footer className="relative z-10 border-t border-white/[0.03] py-6">
-        <div className="max-w-6xl mx-auto px-6 flex items-center justify-between text-[10px] text-slate-700 font-mono">
-          <p>TRAFFICGUARD AI</p>
-          <p>BUILT WITH YOLOV8 + FASTAPI + NEXT.JS</p>
-        </div>
-      </footer>
+      <MarketingFooter />
     </div>
   );
 }

@@ -12,7 +12,7 @@ interface Props {
 export default function GlowingCard({
   children,
   className = "",
-  glowColor = "rgba(239, 68, 68, 0.15)",
+  glowColor = "rgba(255, 255, 255, 0.08)",
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -30,7 +30,7 @@ export default function GlowingCard({
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setOpacity(1)}
       onMouseLeave={() => setOpacity(0)}
-      className={`relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0f1e]/80 backdrop-blur-sm ${className}`}
+      className={`relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm ${className}`}
     >
       {/* Glow follow cursor */}
       <div
@@ -45,7 +45,7 @@ export default function GlowingCard({
         className="pointer-events-none absolute -inset-px rounded-2xl transition-opacity duration-500"
         style={{
           opacity,
-          background: `radial-gradient(300px circle at ${position.x}px ${position.y}px, rgba(239, 68, 68, 0.25), transparent 40%)`,
+          background: `radial-gradient(300px circle at ${position.x}px ${position.y}px, rgba(255, 255, 255, 0.15), transparent 40%)`,
           mask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
           maskComposite: "exclude",
           WebkitMaskComposite: "xor",

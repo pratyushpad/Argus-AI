@@ -46,8 +46,12 @@ def get_model() -> YOLO:
 
 
 def detect(image_bytes: bytes) -> tuple[list[Detection], Image.Image]:
+    from fastapi import HTTPException
     model = get_model()
-    image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+    try:
+        image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+    except Exception:
+        raise HTTPException(400, "Invalid or corrupt image file.")
     img_w, img_h = image.size
 
     results = model.predict(

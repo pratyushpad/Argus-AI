@@ -12,7 +12,7 @@ export default function AnimatedBackground() {
     if (!ctx) return;
 
     let animationId: number;
-    let particles: {
+    const particles: {
       x: number;
       y: number;
       vx: number;
@@ -29,15 +29,14 @@ export default function AnimatedBackground() {
     resize();
     window.addEventListener("resize", resize);
 
-    // Create particles
-    for (let i = 0; i < 80; i++) {
+    for (let i = 0; i < 60; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        size: Math.random() * 2 + 0.5,
-        opacity: Math.random() * 0.3 + 0.05,
+        vx: (Math.random() - 0.5) * 0.2,
+        vy: (Math.random() - 0.5) * 0.2,
+        size: Math.random() * 1.5 + 0.5,
+        opacity: Math.random() * 0.3 + 0.1,
         pulse: Math.random() * Math.PI * 2,
       });
     }
@@ -45,16 +44,15 @@ export default function AnimatedBackground() {
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw connecting lines
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 150) {
+          if (dist < 120) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(239, 68, 68, ${0.03 * (1 - dist / 150)})`;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.06 * (1 - dist / 120)})`;
             ctx.lineWidth = 0.5;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
@@ -63,14 +61,13 @@ export default function AnimatedBackground() {
         }
       }
 
-      // Draw and update particles
       for (const p of particles) {
-        p.pulse += 0.01;
-        const currentOpacity = p.opacity + Math.sin(p.pulse) * 0.05;
+        p.pulse += 0.008;
+        const currentOpacity = p.opacity + Math.sin(p.pulse) * 0.03;
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(239, 68, 68, ${Math.max(0, currentOpacity)})`;
+        ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0, currentOpacity)})`;
         ctx.fill();
 
         p.x += p.vx;

@@ -1,5 +1,6 @@
-# Model weights
+# Model weights (un-ignore the trained model so Render can use it)
 *.pt
+!model/best.pt
 *.onnx
 runs/
 
