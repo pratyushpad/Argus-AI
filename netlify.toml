@@ -10,7 +10,7 @@
   package = "@netlify/plugin-nextjs"
 
 [context.production.environment]
-  NEXT_PUBLIC_API_URL = "https://ml-predictor-production-9041.up.railway.app"
+  NEXT_PUBLIC_API_URL = "https://prat20-ml-predictor.hf.space"
   NEXTAUTH_URL        = "https://your-app.netlify.app"
 
 [[headers]]

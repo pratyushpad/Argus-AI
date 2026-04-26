@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AlertCircle, ArrowLeft, ArrowRight, Chrome, UserRound, Shield, Lock } from "lucide-react";
@@ -23,7 +23,7 @@ const FEATURE_LIST = [
   { icon: ArrowRight, text: "Full access to detection, history, and analytics" },
 ];
 
-export default function LoginPage() {
+function LoginContent() {
   const { user, isLoading, signInWithGoogle, signInAsGuest } = useAuth();
   const router = useRouter();
   const params = useSearchParams();
@@ -144,5 +144,13 @@ export default function LoginPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black" />}>
+      <LoginContent />
+    </Suspense>
   );
 }
