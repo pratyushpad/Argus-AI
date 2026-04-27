@@ -10,11 +10,9 @@ import {
   BarChart3,
   Settings,
   Home,
-  LogOut,
   Command,
   ArrowRight,
 } from "lucide-react";
-import { useAuth } from "@/lib/auth";
 
 interface Action {
   id: string;
@@ -31,7 +29,6 @@ export default function CommandPalette() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const { signOut, user } = useAuth();
 
   const actions: Action[] = [
     { id: "analyze", label: "Detection", description: "Upload and analyze an image", icon: <Scan className="w-4 h-4" />, action: () => router.push("/analyze"), category: "Navigate" },
@@ -39,7 +36,6 @@ export default function CommandPalette() {
     { id: "analytics", label: "Analytics", description: "Charts and insights", icon: <BarChart3 className="w-4 h-4" />, action: () => router.push("/analytics"), category: "Navigate" },
     { id: "settings", label: "Settings", description: "Preferences & profile", icon: <Settings className="w-4 h-4" />, action: () => router.push("/settings"), category: "Navigate" },
     { id: "home", label: "Landing Page", description: "Go to homepage", icon: <Home className="w-4 h-4" />, action: () => router.push("/"), category: "Navigate" },
-    ...(user ? [{ id: "signout", label: "Sign Out", description: "Sign out of your account", icon: <LogOut className="w-4 h-4" />, action: () => { signOut(); setOpen(false); }, category: "Account" }] : []),
   ];
 
   const filtered = query

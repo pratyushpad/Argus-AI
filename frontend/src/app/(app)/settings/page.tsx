@@ -10,15 +10,12 @@ import {
   Download,
   Github,
   Info,
-  LogOut,
   RotateCcw,
   Settings2,
-  Shield,
   Trash2,
   UserRound,
 } from "lucide-react";
 import Logo from "@/components/Logo";
-import { useAuth } from "@/lib/auth";
 import { clearHistory, getHistory } from "@/lib/history";
 import { getPreferences, resetPreferences, savePreferences } from "@/lib/preferences";
 import { MagicCard } from "@/components/ui/magic-card";
@@ -66,7 +63,6 @@ function CardHeader({
 }
 
 export default function SettingsPage() {
-  const { user, signOut } = useAuth();
   const [historyCount, setHistoryCount] = useState(0);
   const [notifications, setNotifications] = useState(true);
   const [autoSave, setAutoSave] = useState(true);
@@ -138,19 +134,13 @@ export default function SettingsPage() {
           <CardHeader icon={UserRound} eyebrow="Account" title="Profile" />
           <div className="mt-5 flex items-start gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[8px] border border-white/10 bg-black/45 text-lg font-semibold text-white">
-              {user ? user.name.charAt(0).toUpperCase() : <UserRound className="h-5 w-5" />}
+              <UserRound className="h-5 w-5" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate font-medium text-white">{user ? user.name : "Guest workspace"}</p>
+              <p className="truncate font-medium text-white">Local workspace</p>
               <p className="mt-1 truncate text-sm text-white/42">
-                {user ? user.email : "Local-only mode — data stays in this browser."}
+                Local-only mode — data stays in this browser.
               </p>
-              {user?.mode && (
-                <div className="mt-2 inline-flex items-center gap-2 rounded-[6px] border border-white/10 bg-black/45 px-3 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-white/40">
-                  <Shield className="h-3 w-3" />
-                  {user.mode === "guest" ? "Guest" : "Google"}
-                </div>
-              )}
             </div>
           </div>
           <div className="mt-5 grid grid-cols-2 gap-3">
@@ -160,20 +150,8 @@ export default function SettingsPage() {
             </div>
             <div className="rounded-[8px] border border-white/8 bg-black/45 px-3 py-3">
               <p className="text-[0.6rem] uppercase tracking-[0.22em] text-white/30">Mode</p>
-              <p className="mt-1 font-display text-2xl text-white">{user?.mode === "guest" ? "Guest" : user ? "Auth" : "Local"}</p>
+              <p className="mt-1 font-display text-2xl text-white">Local</p>
             </div>
-          </div>
-          <div className="mt-5 flex gap-2">
-            {user ? (
-              <button onClick={signOut} className="btn-ghost-framer text-sm">
-                <LogOut className="h-4 w-4" />
-                Sign out
-              </button>
-            ) : (
-              <Link href="/auth/login" className="btn-ghost-framer text-sm">
-                Sign in
-              </Link>
-            )}
           </div>
         </MagicCard>
 

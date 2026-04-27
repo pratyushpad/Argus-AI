@@ -49,12 +49,6 @@ export default function MarketingHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <Link
-            href="/auth/login"
-            className="hidden rounded-[6px] border border-white/10 px-4 py-2 text-sm text-white/65 transition-colors hover:border-white/20 hover:text-white sm:inline-flex"
-          >
-            Sign in
-          </Link>
           <Link href="/analyze" className="btn-indigo text-sm">
             Open workspace
             <ArrowRight className="h-4 w-4" />

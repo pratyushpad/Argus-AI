@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono, Geist } from "next/font/google";
 import "./globals.css";
-import { SessionProvider } from "next-auth/react";
-import { AuthProvider } from "@/lib/auth";
 
 const inter = Inter({
   variable: "--font-jakarta",
@@ -54,9 +52,7 @@ export default function RootLayout({
       className={`${inter.variable} ${geist.variable} ${jetbrainsMono.variable} h-full antialiased dark`}
     >
       <body className="min-h-full flex flex-col bg-black text-[#EDEDEF]">
-        <SessionProvider>
-          <AuthProvider>{children}</AuthProvider>
-        </SessionProvider>
+        {children}
       </body>
     </html>
   );

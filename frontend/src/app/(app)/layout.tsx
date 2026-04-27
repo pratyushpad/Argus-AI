@@ -8,17 +8,12 @@ import {
   BarChart3,
   Clock3,
   Command,
-  LogOut,
   ScanSearch,
   Settings2,
-  UserRound,
   ArrowLeft,
-  Activity,
-  Shield,
 } from "lucide-react";
 import Logo from "@/components/Logo";
 import CommandPalette from "@/components/CommandPalette";
-import { useAuth } from "@/lib/auth";
 import { getHistory } from "@/lib/history";
 
 const NAV_ITEMS = [
@@ -69,7 +64,6 @@ const PAGE_COPY: Record<string, { title: string; description: string }> = {
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { user, signOut } = useAuth();
   const [historyCount, setHistoryCount] = useState(0);
 
   useEffect(() => {
@@ -136,36 +130,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div className="border-t border-white/8 p-3">
-          <div className="flex items-center gap-2.5 rounded-[6px] px-2 py-2">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 bg-black/45 text-xs font-semibold text-white">
-              {user ? user.name.charAt(0).toUpperCase() : <UserRound className="h-3.5 w-3.5" />}
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-medium text-white/85">
-                {user ? user.name : "Guest"}
-              </p>
-              <p className="truncate text-[0.65rem] text-white/35">
-                {user ? user.email : "local-only mode"}
-              </p>
-            </div>
-            {user ? (
-              <button
-                onClick={signOut}
-                title="Sign out"
-                className="rounded-[5px] p-1.5 text-white/40 hover:bg-white/[0.05] hover:text-white"
-              >
-                <LogOut className="h-3.5 w-3.5" />
-              </button>
-            ) : (
-              <Link
-                href="/auth/login"
-                title="Sign in"
-                className="rounded-[5px] p-1.5 text-white/40 hover:bg-white/[0.05] hover:text-white"
-              >
-                <UserRound className="h-3.5 w-3.5" />
-              </Link>
-            )}
-          </div>
           <Link
             href="/"
             className="mt-1 flex items-center gap-2 rounded-[5px] px-2 py-1.5 text-[0.7rem] text-white/40 transition-colors hover:bg-white/[0.03] hover:text-white"
