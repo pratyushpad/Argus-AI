@@ -1,6 +1,12 @@
 # TrafficGuard AI
 
+**Live demo:** [ai-argus.netlify.app](https://ai-argus.netlify.app)
+
 A full-stack web app that detects traffic violations from dashcam images. Upload a photo and the app identifies vehicles, traffic signs, pedestrians, and flags violations like red light running or no-entry breaches.
+
+![Sample detection result](docs/demo-result.jpg)
+
+> **Note:** the backend runs on a free-tier Hugging Face Space that sleeps when idle — the first request after a while can take ~30 seconds while it wakes up. Requests after that are fast (<1s).
 
 I built this to explore computer vision with real-world applications. The model is trained on ~5,200 dashcam images across 23 object classes, and the violation logic uses spatial proximity rules between detected objects.
 
@@ -28,7 +34,7 @@ I built this to explore computer vision with real-world applications. The model 
 - **Model:** YOLOv8s trained with ultralytics on the Traffic Violation V2 dataset from Kaggle
 - **Backend:** Python, FastAPI — handles inference, violation logic, and image annotation
 - **Frontend:** Next.js 16, TypeScript, Tailwind CSS — drag-and-drop upload with real-time results
-- **Deployment:** Docker + Google Cloud Run
+- **Deployment:** frontend on Netlify, backend (Docker) on Hugging Face Spaces
 
 ## Getting Started
 
@@ -71,13 +77,9 @@ python model/train.py --data model/data.yaml --epochs 100 --batch 8
 ```
 This takes about 2-3 hours on an M-series Mac (MPS) or ~30 min on a T4 GPU (Colab). The best weights get saved to `runs/traffic_violation/weights/best.pt` — copy that to `model/best.pt`.
 
-### Deploy to Google Cloud
+### Deployment
 
-```bash
-gcloud run deploy trafficguard-api --source=./backend --region=us-central1 --memory=2Gi --cpu=2 --allow-unauthenticated
-
-gcloud run deploy trafficguard-web --source=./frontend --region=us-central1 --allow-unauthenticated
-```
+The live demo runs the FastAPI backend as a Docker container on a Hugging Face Space (see `hf-space/`) and the Next.js frontend on Netlify (see `netlify.toml`, which points `NEXT_PUBLIC_API_URL` at the Space).
 
 ## Project Structure
 

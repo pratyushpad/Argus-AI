@@ -11,7 +11,7 @@
 
 [context.production.environment]
   NEXT_PUBLIC_API_URL = "https://prat20-ml-predictor.hf.space"
-  NEXTAUTH_URL        = "https://your-app.netlify.app"
+  NEXTAUTH_URL        = "https://ai-argus.netlify.app"
 
 [[headers]]
   for = "/*"
