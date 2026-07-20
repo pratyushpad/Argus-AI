@@ -11,6 +11,6 @@ services:
       - key: MODEL_PATH
         value: ../model/best.pt
       - key: ALLOWED_ORIGINS
-        value: https://your-app.netlify.app
+        value: https://ai-argus.netlify.app
       - key: PYTHON_VERSION
         value: 3.11.0
