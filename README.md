@@ -1,4 +1,4 @@
-# TrafficGuard AI
+# Argus AI
 
 **Live demo:** [ai-argus.netlify.app](https://ai-argus.netlify.app)
 
@@ -42,7 +42,7 @@ I built this to explore computer vision with real-world applications. The model 
 
 - Python 3.10+
 - Node.js 18+
-- A trained model file (`best.pt`) — see training section below
+- A trained model file (`best.pt`) — download from the [v1.0-model release](https://github.com/pratyushpad/Argus-AI/releases/tag/v1.0-model) and place at `model/best.pt`, or train your own (see training section below)
 
 ### Run Locally
 

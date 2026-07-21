@@ -19,7 +19,7 @@ def spawn(cmd, cwd, logfile):
     )
     return p
 
-print("Starting TrafficGuard AI...")
+print("Starting Argus AI...")
 
 backend = spawn(
     [VENV_UVICORN, "main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"],

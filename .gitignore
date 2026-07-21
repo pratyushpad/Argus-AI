@@ -1,6 +1,6 @@
-# Model weights (un-ignore the trained model so Render can use it)
+# Model weights
 *.pt
-!model/best.pt
+# model/best.pt ships via the v1.0-model GitHub release, not git
 *.onnx
 runs/
 
@@ -43,3 +43,5 @@ ui-ux-pro-max-skill-main/
 hf-space/
 
 node-compile-cache/
+CLAUDE.md
+AGENTS.md
