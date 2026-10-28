@@ -87,7 +87,6 @@ The live demo runs the FastAPI backend as a Docker container on a Hugging Face S
 ├── model/            # Training script and data config
 ├── backend/          # FastAPI app (detection, violation rules, annotator)
 ├── frontend/         # Next.js app (upload UI, results display)
-├── deploy/           # Cloud Build config
 ├── images/           # Training & validation images
 ├── labels/           # YOLO-format annotation labels
 └── docker-compose.yml
@@ -98,4 +97,4 @@ The live demo runs the FastAPI backend as a Docker container on a Hugging Face S
 - Training YOLOv8 on a custom dataset with mixed image sizes and 23 classes
 - Building spatial proximity rules to infer violations from static image detections
 - Connecting a Python ML backend to a modern React frontend
-- Containerizing and deploying ML workloads to Google Cloud Run
+- Containerizing a FastAPI model server and deploying it on Hugging Face Spaces
