@@ -24,11 +24,13 @@ import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { MagicCard } from "@/components/ui/magic-card";
 import { NumberTicker } from "@/components/ui/number-ticker";
 
+// Must match CLASS_NAMES in backend/services/detector.py (the model's 23 classes).
 const DETECTION_CLASSES = [
-  "car", "truck", "bus", "motorcycle", "bicycle", "person", "traffic light",
-  "stop sign", "yield sign", "speed limit", "no entry", "pedestrian crossing",
-  "school zone", "construction", "lane marking", "fire hydrant", "parking meter",
-  "bench", "rail", "trailer", "ambulance", "police", "delivery van",
+  "person", "car", "truck", "bus", "motorcycle", "red light", "green light",
+  "stop sign", "no entry", "no overtaking", "speed limit 20", "speed limit 30",
+  "speed limit 40", "speed limit 50", "speed limit 60", "speed limit 70",
+  "speed limit 80", "speed limit 100", "speed limit 120", "no left turn",
+  "no right turn", "no stopping", "no u-turn",
 ];
 
 const FEATURE_PANELS = [
