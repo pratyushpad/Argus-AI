@@ -237,7 +237,7 @@ export default function SettingsPage() {
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 <a
-                  href="https://github.com/Pratyushpad27/ML-Predictor"
+                  href="https://github.com/pratyushpad/Argus-AI"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-ghost-framer text-sm"

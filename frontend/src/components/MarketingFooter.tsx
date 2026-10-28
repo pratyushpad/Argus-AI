@@ -57,7 +57,7 @@ export default function MarketingFooter() {
         <div>
           <p className="text-xs uppercase tracking-[0.28em] text-white/28">Source</p>
           <a
-            href="https://github.com/Pratyushpad27/ML-Predictor"
+            href="https://github.com/pratyushpad/Argus-AI"
             target="_blank"
             rel="noopener noreferrer"
             className="mt-4 inline-flex items-center gap-2 rounded-[6px] border border-white/10 px-4 py-2 text-sm text-white/58 transition-colors hover:border-white/18 hover:text-white"
