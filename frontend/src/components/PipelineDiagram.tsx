@@ -12,7 +12,7 @@ const STAGES = [
 
 const METRICS = [
   { label: "mAP50", value: "92.7%" },
-  { label: "Inference", value: "<35ms" },
+  { label: "mAP50-95", value: "81.0%" },
   { label: "Stages", value: "4" },
   { label: "Classes", value: "23" },
 ];

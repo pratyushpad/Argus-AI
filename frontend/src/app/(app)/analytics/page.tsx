@@ -232,7 +232,7 @@ export default function AnalyticsPage() {
             </div>
             {/* /Sticky KPI strip */}
 
-            {/* Object Distribution — full width */}
+            {/* Object Distribution - full width */}
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -272,7 +272,7 @@ export default function AnalyticsPage() {
               </div>
             </motion.div>
 
-            {/* Severity Donut + Confidence Area — 2-col */}
+            {/* Severity Donut + Confidence Area - 2-col */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
               {/* Severity Donut */}
               <motion.div
@@ -365,7 +365,7 @@ export default function AnalyticsPage() {
               </motion.div>
             </div>
 
-            {/* Violation Types — horizontal bars */}
+            {/* Violation Types - horizontal bars */}
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -411,7 +411,7 @@ export default function AnalyticsPage() {
               </div>
             </motion.div>
 
-            {/* Activity Timeline — full width */}
+            {/* Activity Timeline - full width */}
             {data.timelineData.length > 1 && (
               <motion.div
                 initial={{ opacity: 0, y: 12 }}

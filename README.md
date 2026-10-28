@@ -2,100 +2,84 @@
 
 **Live demo:** [ai-argus.netlify.app](https://ai-argus.netlify.app)
 
-A full-stack web app that detects traffic violations from dashcam images. Upload a photo and the app identifies vehicles, traffic signs, pedestrians, and flags violations like red light running or no-entry breaches.
+Upload a road photo and Argus finds vehicles, pedestrians, traffic lights and 16 kinds of traffic signs with a custom-trained YOLOv8s model, then applies spatial rules to flag likely violations (for example, a vehicle next to a no-entry sign).
 
 ![Sample detection result](docs/demo-result.jpg)
 
-> **Note:** the backend runs on a free-tier Hugging Face Space that sleeps when idle — the first request after a while can take ~30 seconds while it wakes up. Requests after that are fast (<1s).
+> **Note:** the backend runs on a free Hugging Face Space (CPU) that sleeps when idle. The first request after a sleep takes about 30 seconds while it wakes up; after that a request takes about 3 seconds end to end.
 
-I built this to explore computer vision with real-world applications. The model is trained on ~5,200 dashcam images across 23 object classes, and the violation logic uses spatial proximity rules between detected objects.
+## Results
 
-## How It Works
+YOLOv8s fine-tuned for 80 epochs (batch 16, 640 px) on a Colab GPU in 2.7 hours. Validation split, 1,470 images, 1,592 boxes:
 
-1. User uploads a dashcam image through the web interface
-2. The image is sent to the FastAPI backend
-3. YOLOv8 runs inference to detect objects (cars, signs, lights, pedestrians, etc.)
-4. A rule engine checks spatial relationships between detections to flag violations
-5. The annotated image with bounding boxes and a violation report is returned
+| Metric | Value |
+|---|---|
+| mAP50 | 0.927 |
+| mAP50-95 | 0.810 |
+| Precision / Recall | 0.920 / 0.871 |
+| Vehicles (car / truck / bus) mAP50 | 0.825 / 0.732 / 0.747 |
+| Traffic signs mAP50 | 0.86 to 0.995 |
 
-## What It Detects
+Inference: about 4 ms per image (model time) on an Apple M3 Pro GPU (MPS), about 87 ms on its CPU. The live demo runs on a free CPU Space, so expect about 3 seconds per request including the network round trip.
 
-**Objects (23 classes):** cars, trucks, buses, motorcycles, pedestrians, red/green lights, stop signs, speed limit signs (20-120 km/h), no entry, no overtaking, no turn signs, no stopping, no U-turn
+**Limitations.**
+- The 5,254 training images merge three public sources (a traffic-sign image set, street-view sign frames and BDD100K crops), and 90% of them contain a single labeled object. Most are cropped images, not full dashcam frames.
+- Signs are detected well. Vehicles are the weakest classes (truck 0.732, bus 0.747), and vehicles in full street scenes can be missed because one source dataset labels only signs.
+- The validation split also chose the checkpoint, and there is no separate test set, so these numbers are likely a little optimistic.
+- Violations come from distance rules on a single image, not from tracking over time, so they are hints, not evidence.
 
-**Violations:**
-- Red light running (vehicle near red light)
-- Stop sign / no-entry breaches
-- Pedestrian proximity risk
-- No-turn and no-stopping zone violations
-- Speed zone awareness alerts
+## How it works
 
-## Tech Stack
+1. The Next.js frontend posts the image to `POST /api/detect` on the FastAPI backend.
+2. YOLOv8s detects 23 classes: 5 road users (person, car, truck, bus, motorcycle), 2 light states (red, green) and 16 sign types (stop, no entry, no overtaking, speed limits 20 to 120, no left turn, no right turn, no stopping, no U-turn).
+3. A rule engine (`backend/services/violation_rules.py`) checks distances between detections: 8 sign rules, speed-zone notices and pedestrian proximity.
+4. The API returns JSON detections, violations and an annotated image.
 
-- **Model:** YOLOv8s trained with ultralytics on the Traffic Violation V2 dataset from Kaggle
-- **Backend:** Python, FastAPI — handles inference, violation logic, and image annotation
-- **Frontend:** Next.js 16, TypeScript, Tailwind CSS — drag-and-drop upload with real-time results
-- **Deployment:** frontend on Netlify, backend (Docker) on Hugging Face Spaces
+## Tech stack
 
-## Getting Started
+- **Model:** YOLOv8s trained with ultralytics
+- **Backend:** Python, FastAPI (inference, violation rules, image annotation)
+- **Frontend:** Next.js 16, TypeScript, Tailwind CSS
+- **Deployment:** backend as a Docker container on Hugging Face Spaces (CPU basic), frontend on Netlify (`netlify.toml` sets `NEXT_PUBLIC_API_URL`)
 
-### Prerequisites
+## Run locally
 
-- Python 3.10+
-- Node.js 18+
-- A trained model file (`best.pt`) — download from the [v1.0-model release](https://github.com/pratyushpad/Argus-AI/releases/tag/v1.0-model) and place at `model/best.pt`, or train your own (see training section below)
+Requires Python 3.10+ and Node.js 18+. Download `best.pt` from the [v1.0-model release](https://github.com/pratyushpad/Argus-AI/releases/tag/v1.0-model) to `model/best.pt` (the Docker setup needs it too), then:
 
-### Run Locally
-
-**Backend:**
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+python3 -m venv .venv && source .venv/bin/activate
 pip install -r backend/requirements.txt
-cd backend && python main.py
+cd backend && python main.py          # http://localhost:8080/docs
 ```
-API runs at `http://localhost:8080` (Swagger docs at `/docs`).
 
-**Frontend:**
 ```bash
-cd frontend
-npm install
-npm run dev
-```
-Opens at `http://localhost:3000`.
-
-**Or with Docker:**
-```bash
-docker compose up --build
+cd frontend && npm install && npm run dev   # http://localhost:3000
 ```
 
-### Train the Model
+Or `docker compose up --build`.
 
-If you want to retrain from scratch:
+## Train
+
 ```bash
 pip install ultralytics
-python model/train.py --data model/data.yaml --epochs 100 --batch 8
+python model/train.py --data model/data.yaml --epochs 80 --batch 16
 ```
-This takes about 2-3 hours on an M-series Mac (MPS) or ~30 min on a T4 GPU (Colab). The best weights get saved to `runs/traffic_violation/weights/best.pt` — copy that to `model/best.pt`.
 
-### Deployment
+Set `path:` in `model/data.yaml` to your dataset folder (YOLO format: `images/` and `labels/`, each with `train/` and `val/`). The dataset is not included in this repo. Best weights land in `runs/traffic_violation/weights/best.pt`; copy that to `model/best.pt`.
 
-The live demo runs the FastAPI backend as a Docker container on a Hugging Face Space (see `hf-space/`) and the Next.js frontend on Netlify (see `netlify.toml`, which points `NEXT_PUBLIC_API_URL` at the Space).
-
-## Project Structure
+## Project structure
 
 ```
 ├── model/            # Training script and data config
 ├── backend/          # FastAPI app (detection, violation rules, annotator)
 ├── frontend/         # Next.js app (upload UI, results display)
-├── deploy/           # Cloud Build config
-├── images/           # Training & validation images
-├── labels/           # YOLO-format annotation labels
+├── docs/             # README images
 └── docker-compose.yml
 ```
 
-## What I Learned
+## What I learned
 
 - Training YOLOv8 on a custom dataset with mixed image sizes and 23 classes
+- Why one headline mAP hides weak classes, and why a merged dataset needs per-source checks
 - Building spatial proximity rules to infer violations from static image detections
-- Connecting a Python ML backend to a modern React frontend
-- Containerizing and deploying ML workloads to Google Cloud Run
+- Containerizing a FastAPI model server and deploying it on Hugging Face Spaces

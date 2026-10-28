@@ -183,9 +183,9 @@ export default function AnalyzePage() {
         ))}
       </div>
 
-      {/* Main detection panel — left sticks while right scrolls */}
+      {/* Main detection panel - left sticks while right scrolls */}
       <div className="grid gap-5 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
-        {/* Upload / results — sticky so the user can scroll the right column without losing context */}
+        {/* Upload / results - sticky so the user can scroll the right column without losing context */}
         <div className="rounded-[12px] border border-white/10 bg-white/[0.03] p-6 lg:sticky lg:top-24">
           <div className="flex items-center justify-between">
             <div>
@@ -271,7 +271,7 @@ export default function AnalyzePage() {
             <div className="mt-4 space-y-2">
               {[
                 "Upload a JPG, PNG, or WebP frame under 10 MB.",
-                "Run the model — results include detections + violations.",
+                "Run the model. Results include detections and violations.",
                 "Review the annotated image and violation table.",
                 "If autosave is on, the run feeds history and analytics.",
               ].map((item, i) => (
@@ -287,7 +287,7 @@ export default function AnalyzePage() {
             </Link>
           </div>
 
-          {/* Recent runs — fills the rest of the column */}
+          {/* Recent runs - fills the rest of the column */}
           <div className="flex-1 rounded-[12px] border border-white/10 bg-white/[0.03] p-6">
             <div className="flex items-center justify-between">
               <p className="text-[0.68rem] uppercase tracking-[0.28em] text-white/28">Recent runs</p>
@@ -296,7 +296,7 @@ export default function AnalyzePage() {
               </Link>
             </div>
             {recentRuns.length === 0 ? (
-              <p className="mt-4 text-sm text-white/40">No runs yet — upload a frame to start filling history.</p>
+              <p className="mt-4 text-sm text-white/40">No runs yet. Upload a frame to start filling history.</p>
             ) : (
               <div className="mt-4 space-y-2">
                 {recentRuns.map((run) => (

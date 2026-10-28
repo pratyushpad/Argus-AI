@@ -139,7 +139,7 @@ export default function SettingsPage() {
             <div className="min-w-0 flex-1">
               <p className="truncate font-medium text-white">Local workspace</p>
               <p className="mt-1 truncate text-sm text-white/42">
-                Local-only mode — data stays in this browser.
+                Local-only mode: data stays in this browser.
               </p>
             </div>
           </div>
@@ -212,13 +212,13 @@ export default function SettingsPage() {
           </div>
         </MagicCard>
 
-        {/* Reset + About — full row */}
+        {/* Reset + About - full row */}
         <MagicCard className="p-6 lg:col-span-3">
           <div className="grid gap-6 md:grid-cols-2 md:items-start">
             <div>
               <CardHeader icon={RotateCcw} eyebrow="Reset" title="Return to defaults" />
               <p className="mt-4 text-sm leading-6 text-white/48">
-                Resets behavioral settings only — stored history is not affected.
+                Resets behavioral settings only; stored history is not affected.
               </p>
               <button onClick={handleResetPreferences} className="btn-ghost-framer mt-4 text-sm">
                 <Settings2 className="h-4 w-4" />
@@ -237,7 +237,7 @@ export default function SettingsPage() {
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 <a
-                  href="https://github.com/Pratyushpad27/ML-Predictor"
+                  href="https://github.com/pratyushpad/Argus-AI"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-ghost-framer text-sm"

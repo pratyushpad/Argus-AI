@@ -10,11 +10,11 @@ const TABS = [
     label: "Detection",
     icon: <Scan className="w-4 h-4" />,
     headline: "Real-time object detection",
-    body: "YOLOv8s processes every frame in under 35ms, identifying 23 classes — vehicles, pedestrians, traffic signs, and signals. Custom-trained on 5,254 dashcam images.",
+    body: "YOLOv8s identifies 23 classes: vehicles, pedestrians, traffic signs and signals. Custom-trained on 5,254 labeled images.",
     stats: [
       { label: "mAP50", value: "92.7%" },
       { label: "Classes", value: "23" },
-      { label: "Inference", value: "<35ms" },
+      { label: "mAP50-95", value: "81.0%" },
     ],
     visual: (
       <div className="rounded-xl border border-white/[0.07] bg-[#0f0f0f] overflow-hidden">
@@ -48,7 +48,7 @@ const TABS = [
     label: "Analysis",
     icon: <BarChart3 className="w-4 h-4" />,
     headline: "Intelligent violation rules engine",
-    body: "8+ built-in rules cross-reference detected objects — red light runners, proximity violations, illegal maneuvers. Each produces a structured report with severity and evidence.",
+    body: "8+ built-in rules cross-reference detected objects: red light runners, proximity violations, illegal maneuvers. Each produces a structured report with severity and evidence.",
     stats: [
       { label: "Rules", value: "8+" },
       { label: "Severity levels", value: "3" },

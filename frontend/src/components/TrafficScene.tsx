@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
-/* ─── Detections — positioned for DASHCAM (driver's POV looking ahead) ─── */
+/* ─── Detections - positioned for DASHCAM (driver's POV looking ahead) ─── */
 const DETECTIONS = [
   { id: "car-ahead",   label: "car",       conf: 0.94, x: 34, y: 26, w: 18, h: 28, color: "#2563eb" },
   { id: "truck-right", label: "truck",     conf: 0.89, x: 62, y: 22, w: 16, h: 32, color: "#2563eb" },
@@ -66,7 +66,7 @@ function TrafficLight({ on }: { on: "red" | "green" }) {
   );
 }
 
-/* ─── Vehicle (rear view — seen from behind on the road ahead) ─── */
+/* ─── Vehicle (rear view - seen from behind on the road ahead) ─── */
 function VehicleAhead({ x, y, w, h, color, taillights = true }: {
   x: number; y: number; w: number; h: number; color: string; taillights?: boolean;
 }) {
@@ -145,7 +145,7 @@ export default function TrafficScene() {
         ))}
       </div>
 
-      {/* ── Vehicles ahead (rear view — driver sees backs of cars) ── */}
+      {/* ── Vehicles ahead (rear view - driver sees backs of cars) ── */}
       <VehicleAhead x={36} y={30} w={14} h={24} color="#1a2440" />
       <VehicleAhead x={63} y={26} w={12} h={28} color="#2a1a3a" />
       <VehicleAhead x={44} y={22} w={6}  h={8}  color="#1a2a2a" taillights={false} />
@@ -195,7 +195,7 @@ export default function TrafficScene() {
         {/* Top-center: LIVE badge */}
         <div className="absolute top-2.5 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm border border-white/[0.06]">
           <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse" />
-          <span className="text-[9px] font-mono text-[#8A8F98] uppercase tracking-widest">LIVE · 32ms</span>
+          <span className="text-[9px] font-mono text-[#8A8F98] uppercase tracking-widest">SIMULATED</span>
         </div>
 
         {/* Top-left: Model info */}

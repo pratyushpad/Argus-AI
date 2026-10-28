@@ -24,11 +24,13 @@ import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { MagicCard } from "@/components/ui/magic-card";
 import { NumberTicker } from "@/components/ui/number-ticker";
 
+// Must match CLASS_NAMES in backend/services/detector.py (the model's 23 classes).
 const DETECTION_CLASSES = [
-  "car", "truck", "bus", "motorcycle", "bicycle", "person", "traffic light",
-  "stop sign", "yield sign", "speed limit", "no entry", "pedestrian crossing",
-  "school zone", "construction", "lane marking", "fire hydrant", "parking meter",
-  "bench", "rail", "trailer", "ambulance", "police", "delivery van",
+  "person", "car", "truck", "bus", "motorcycle", "red light", "green light",
+  "stop sign", "no entry", "no overtaking", "speed limit 20", "speed limit 30",
+  "speed limit 40", "speed limit 50", "speed limit 60", "speed limit 70",
+  "speed limit 80", "speed limit 100", "speed limit 120", "no left turn",
+  "no right turn", "no stopping", "no u-turn",
 ];
 
 const FEATURE_PANELS = [
@@ -51,8 +53,8 @@ const FEATURE_PANELS = [
 
 const SYSTEM_STRIPS = [
   { label: "Detection classes", value: "23", detail: "vehicles, signs, signals, pedestrians" },
-  { label: "Inference target", value: "<35ms", detail: "GPU path for responsive review" },
-  { label: "Dataset coverage", value: "5,254", detail: "labeled dashcam training images" },
+  { label: "Model inference", value: "~4ms", detail: "per image on an Apple M3 Pro GPU; about 87 ms on CPU (the free live demo runs on CPU)" },
+  { label: "Dataset coverage", value: "5,254", detail: "labeled training images" },
   { label: "Workspace pages", value: "4", detail: "detection, history, analytics, settings" },
 ];
 
@@ -67,7 +69,7 @@ const PAGE_LINKS = [
     href: "/analyze",
     title: "Detection workspace",
     eyebrow: "Functional application",
-    copy: "Upload frames, run detection, review history and analytics — all in one consistent product shell.",
+    copy: "Upload frames, run detection, review history and analytics, all in one place.",
   },
 ];
 
@@ -76,12 +78,6 @@ const RUNBOOK = [
   { step: "02", title: "Review", text: "Inspect annotated output, confidence values, and rule-level findings." },
   { step: "03", title: "Track", text: "Saved analyses appear inside history and feed the analytics layer." },
   { step: "04", title: "Tune", text: "Preferences control autosave behavior and completion notifications." },
-];
-
-const HERO_SIGNAL_CARDS = [
-  { label: "Inference", value: "32ms", detail: "responsive review loop" },
-  { label: "Rules", value: "8+", detail: "scene logic checks" },
-  { label: "Archive", value: "local", detail: "history and analytics" },
 ];
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -106,7 +102,7 @@ export default function HomePage() {
       <MarketingHeader />
 
       <main>
-        {/* Hero — two columns, calm, no gradient text */}
+        {/* Hero - two columns, calm, no gradient text */}
         <section
           ref={heroRef}
           className="relative overflow-hidden border-b border-white/8"
@@ -130,7 +126,7 @@ export default function HomePage() {
 
               <p className="mt-6 max-w-xl text-base leading-7 text-white/55 sm:text-[1.05rem]">
                 Upload a dashcam frame, run YOLOv8 inference, and review every detected
-                object and traffic violation in one workspace built for review — not a demo.
+                object and traffic violation in one workspace.
               </p>
 
               <div className="mt-9 flex flex-wrap items-center gap-3">
@@ -153,9 +149,9 @@ export default function HomePage() {
                   <p className="mt-1 text-xs leading-5 text-white/40">vehicles, signs, signals, pedestrians</p>
                 </div>
                 <div className="rounded-[10px] border border-white/8 bg-white/[0.02] px-5 py-4">
-                  <p className="text-[0.68rem] uppercase tracking-[0.24em] text-white/35">Inference target</p>
-                  <p className="mt-2 font-display text-3xl font-semibold text-white">&lt;35ms</p>
-                  <p className="mt-1 text-xs leading-5 text-white/40">GPU path for responsive review</p>
+                  <p className="text-[0.68rem] uppercase tracking-[0.24em] text-white/35">Validation mAP50</p>
+                  <p className="mt-2 font-display text-3xl font-semibold text-white">92.7%</p>
+                  <p className="mt-1 text-xs leading-5 text-white/40">on the 1,470-image validation split</p>
                 </div>
               </div>
             </motion.div>
@@ -227,16 +223,13 @@ export default function HomePage() {
             <div>
               <SectionLabel>System framing</SectionLabel>
               <h2 className="mt-6 font-display text-[clamp(2.2rem,4vw,4.8rem)] leading-[0.95] tracking-[-0.05em] text-white">
-                Designed like
+                What it
                 <br />
-                a product, not
-                <br />
-                a prompt output.
+                does today.
               </h2>
               <p className="mt-5 max-w-md text-base leading-7 text-white/50">
-                The new layout borrows the editorial pacing, big type, and spatial grid
-                you referenced, while keeping the interface monochrome with only small
-                purple signal accents.
+                A custom-trained YOLOv8s detector feeds a rule engine that flags likely
+                violations, and every run can be saved for later review.
               </p>
             </div>
 
@@ -307,13 +300,12 @@ export default function HomePage() {
                   ))}
                 </div>
                 <h3 className="mt-8 font-display text-4xl leading-tight text-white">
-                  Each page now has a purpose inside the product journey.
+                  Three parts: overview, system, workspace.
                 </h3>
                 <p className="mt-4 max-w-xl text-sm leading-7 text-white/48">
-                  The landing page explains why the product exists, the system page
-                  explains how it works, and the workspace pages handle actual analysis
-                  and review. That split makes the app feel intentional rather than
-                  visually repetitive.
+                  This page gives the overview, the system page explains the model and
+                  rule engine, and the workspace pages run detections and keep a history
+                  of past results.
                 </p>
               </div>
 
