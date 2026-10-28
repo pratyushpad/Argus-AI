@@ -69,7 +69,7 @@ const PAGE_LINKS = [
     href: "/analyze",
     title: "Detection workspace",
     eyebrow: "Functional application",
-    copy: "Upload frames, run detection, review history and analytics — all in one consistent product shell.",
+    copy: "Upload frames, run detection, review history and analytics, all in one place.",
   },
 ];
 
@@ -102,7 +102,7 @@ export default function HomePage() {
       <MarketingHeader />
 
       <main>
-        {/* Hero — two columns, calm, no gradient text */}
+        {/* Hero - two columns, calm, no gradient text */}
         <section
           ref={heroRef}
           className="relative overflow-hidden border-b border-white/8"
@@ -126,7 +126,7 @@ export default function HomePage() {
 
               <p className="mt-6 max-w-xl text-base leading-7 text-white/55 sm:text-[1.05rem]">
                 Upload a dashcam frame, run YOLOv8 inference, and review every detected
-                object and traffic violation in one workspace built for review — not a demo.
+                object and traffic violation in one workspace.
               </p>
 
               <div className="mt-9 flex flex-wrap items-center gap-3">

@@ -31,7 +31,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Argus AI — Computer Vision for Road Safety",
+  title: "Argus AI: Computer Vision for Road Safety",
   description:
     "AI-powered traffic violation detection and object recognition from dashcam imagery using YOLOv8",
   appleWebApp: {

@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ─────────────────────────────────────────────
-   FRAMER DARK DESIGN SYSTEM — Token Layer
+   FRAMER DARK DESIGN SYSTEM - Token Layer
    ───────────────────────────────────────────── */
 :root {
   /* ── Backgrounds ── */
@@ -252,7 +252,7 @@ body {
   background-size: 64px 64px;
 }
 
-/* Legacy dot grid — kept for backward compat */
+/* Legacy dot grid - kept for backward compat */
 .dot-grid {
   background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
   background-size: 26px 26px;

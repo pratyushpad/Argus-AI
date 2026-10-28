@@ -48,7 +48,7 @@ const TABS = [
     label: "Analysis",
     icon: <BarChart3 className="w-4 h-4" />,
     headline: "Intelligent violation rules engine",
-    body: "8+ built-in rules cross-reference detected objects — red light runners, proximity violations, illegal maneuvers. Each produces a structured report with severity and evidence.",
+    body: "8+ built-in rules cross-reference detected objects: red light runners, proximity violations, illegal maneuvers. Each produces a structured report with severity and evidence.",
     stats: [
       { label: "Rules", value: "8+" },
       { label: "Severity levels", value: "3" },

@@ -131,7 +131,7 @@ export default function PlatformPage() {
               </div>
             </div>
 
-            {/* Right column — pipeline diagram + module bento */}
+            {/* Right column - pipeline diagram + module bento */}
             <div className="flex flex-col gap-5">
               <PipelineDiagram />
 

@@ -12,7 +12,7 @@ To enable real Google sign-in, create a free OAuth client at Google Cloud Consol
 6. Under **Authorized redirect URIs**, add:
    - `http://localhost:3000/api/auth/callback/google` (for local dev)
    - Your production URL when you deploy
-7. Click **Create** — copy the **Client ID** and **Client Secret**
+7. Click **Create**, then copy the **Client ID** and **Client Secret**
 
 ## Fill in .env.local
 
@@ -45,4 +45,4 @@ Google sign-in will now work on the `/auth/login` page.
 
 ## Note on OAuth consent screen
 
-If you're the only user during development, set the app to **Testing** mode and add your Google account as a test user — no Google verification needed.
+If you're the only user during development, set the app to **Testing** mode and add your Google account as a test user; no Google verification needed.

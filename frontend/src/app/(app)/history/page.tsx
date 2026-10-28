@@ -77,7 +77,7 @@ export default function HistoryPage() {
     <div className="space-y-5 pb-20 md:pb-0">
       <div>
         {records.length === 0 ? (
-          /* ─── EMPTY STATE — full viewport hero ─── */
+          /* ─── EMPTY STATE - full viewport hero ─── */
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -110,14 +110,14 @@ export default function HistoryPage() {
           </motion.div>
         ) : (
           <div className="space-y-5">
-            {/* Sticky header — KPI strip stays visible while results scroll */}
+            {/* Sticky header - KPI strip stays visible while results scroll */}
             <div className="sticky top-[110px] z-30 -mx-2 rounded-[14px] border border-white/8 bg-black/70 px-2 py-3 backdrop-blur-xl">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {[
                 { label: "Analyses", value: records.length, color: "text-blue-400" },
                 { label: "Violations", value: totalViolations, color: totalViolations > 0 ? "text-rose-400" : "text-emerald-400" },
                 { label: "Objects", value: totalObjects, color: "text-blue-400" },
-                { label: "Last run", value: records[0] ? formatTimestamp(records[0].timestamp) : "—", color: "text-white/80", isText: true },
+                { label: "Last run", value: records[0] ? formatTimestamp(records[0].timestamp) : "None yet", color: "text-white/80", isText: true },
               ].map((stat) => (
                 <MagicCard key={stat.label} className="p-5">
                   <p className="text-[0.65rem] uppercase tracking-[0.22em] text-white/30">{stat.label}</p>
@@ -189,7 +189,7 @@ export default function HistoryPage() {
               )}
             </motion.div>
 
-            {/* Grid — full width, drawer opens for detail */}
+            {/* Grid - full width, drawer opens for detail */}
             <div className="grid grid-cols-1 gap-5">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
                 <AnimatePresence>
@@ -289,7 +289,7 @@ export default function HistoryPage() {
                 <div>
                   <p className="text-xs text-white/40">{formatTimestamp(selected.timestamp)}</p>
                   <div className="mt-4 space-y-5">
-                        {/* Stat row — 4 mini cards */}
+                        {/* Stat row - 4 mini cards */}
                         <div className="grid grid-cols-4 gap-2">
                           {[
                             { label: "Objects", value: selected.result.summary.total_objects, color: "text-white/70" },
