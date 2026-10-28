@@ -227,16 +227,13 @@ export default function HomePage() {
             <div>
               <SectionLabel>System framing</SectionLabel>
               <h2 className="mt-6 font-display text-[clamp(2.2rem,4vw,4.8rem)] leading-[0.95] tracking-[-0.05em] text-white">
-                Designed like
+                What it
                 <br />
-                a product, not
-                <br />
-                a prompt output.
+                does today.
               </h2>
               <p className="mt-5 max-w-md text-base leading-7 text-white/50">
-                The new layout borrows the editorial pacing, big type, and spatial grid
-                you referenced, while keeping the interface monochrome with only small
-                purple signal accents.
+                A custom-trained YOLOv8s detector feeds a rule engine that flags likely
+                violations, and every run can be saved for later review.
               </p>
             </div>
 
@@ -307,13 +304,12 @@ export default function HomePage() {
                   ))}
                 </div>
                 <h3 className="mt-8 font-display text-4xl leading-tight text-white">
-                  Each page now has a purpose inside the product journey.
+                  Three parts: overview, system, workspace.
                 </h3>
                 <p className="mt-4 max-w-xl text-sm leading-7 text-white/48">
-                  The landing page explains why the product exists, the system page
-                  explains how it works, and the workspace pages handle actual analysis
-                  and review. That split makes the app feel intentional rather than
-                  visually repetitive.
+                  This page gives the overview, the system page explains the model and
+                  rule engine, and the workspace pages run detections and keep a history
+                  of past results.
                 </p>
               </div>
 

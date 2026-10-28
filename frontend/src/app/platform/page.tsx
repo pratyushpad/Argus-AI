@@ -197,8 +197,8 @@ export default function PlatformPage() {
                 page is doing.
               </h2>
               <p className="mt-4 max-w-md text-base leading-7 text-white/48">
-                This redesign turns the product into a clean sequence: discover it,
-                understand it, run it, review it, and manage it.
+                The app follows one sequence: learn what it does, see how it works, run a
+                detection, review the result, and adjust settings.
               </p>
             </div>
 
