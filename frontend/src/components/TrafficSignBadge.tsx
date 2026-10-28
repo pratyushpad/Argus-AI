@@ -71,8 +71,8 @@ export default function TrafficSignBadge({
           <p className="mt-2 text-xl font-semibold text-white">23</p>
         </div>
         <div className="rounded-[8px] border border-white/8 bg-black/40 p-3">
-          <p className="text-[0.62rem] uppercase tracking-[0.22em] text-white/28">Latency</p>
-          <p className="mt-2 text-xl font-semibold text-white">32ms</p>
+          <p className="text-[0.62rem] uppercase tracking-[0.22em] text-white/28">Rules</p>
+          <p className="mt-2 text-xl font-semibold text-white">10</p>
         </div>
       </div>
     </motion.div>

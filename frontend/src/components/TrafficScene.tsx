@@ -195,7 +195,7 @@ export default function TrafficScene() {
         {/* Top-center: LIVE badge */}
         <div className="absolute top-2.5 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm border border-white/[0.06]">
           <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse" />
-          <span className="text-[9px] font-mono text-[#8A8F98] uppercase tracking-widest">LIVE · 32ms</span>
+          <span className="text-[9px] font-mono text-[#8A8F98] uppercase tracking-widest">SIMULATED</span>
         </div>
 
         {/* Top-left: Model info */}

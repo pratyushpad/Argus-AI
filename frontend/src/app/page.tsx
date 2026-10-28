@@ -53,8 +53,8 @@ const FEATURE_PANELS = [
 
 const SYSTEM_STRIPS = [
   { label: "Detection classes", value: "23", detail: "vehicles, signs, signals, pedestrians" },
-  { label: "Inference target", value: "<35ms", detail: "GPU path for responsive review" },
-  { label: "Dataset coverage", value: "5,254", detail: "labeled dashcam training images" },
+  { label: "Model inference", value: "~4ms", detail: "per image on an Apple M3 Pro GPU; about 87 ms on CPU (the free live demo runs on CPU)" },
+  { label: "Dataset coverage", value: "5,254", detail: "labeled training images" },
   { label: "Workspace pages", value: "4", detail: "detection, history, analytics, settings" },
 ];
 
@@ -78,12 +78,6 @@ const RUNBOOK = [
   { step: "02", title: "Review", text: "Inspect annotated output, confidence values, and rule-level findings." },
   { step: "03", title: "Track", text: "Saved analyses appear inside history and feed the analytics layer." },
   { step: "04", title: "Tune", text: "Preferences control autosave behavior and completion notifications." },
-];
-
-const HERO_SIGNAL_CARDS = [
-  { label: "Inference", value: "32ms", detail: "responsive review loop" },
-  { label: "Rules", value: "8+", detail: "scene logic checks" },
-  { label: "Archive", value: "local", detail: "history and analytics" },
 ];
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -155,9 +149,9 @@ export default function HomePage() {
                   <p className="mt-1 text-xs leading-5 text-white/40">vehicles, signs, signals, pedestrians</p>
                 </div>
                 <div className="rounded-[10px] border border-white/8 bg-white/[0.02] px-5 py-4">
-                  <p className="text-[0.68rem] uppercase tracking-[0.24em] text-white/35">Inference target</p>
-                  <p className="mt-2 font-display text-3xl font-semibold text-white">&lt;35ms</p>
-                  <p className="mt-1 text-xs leading-5 text-white/40">GPU path for responsive review</p>
+                  <p className="text-[0.68rem] uppercase tracking-[0.24em] text-white/35">Validation mAP50</p>
+                  <p className="mt-2 font-display text-3xl font-semibold text-white">92.7%</p>
+                  <p className="mt-1 text-xs leading-5 text-white/40">on the 1,470-image validation split</p>
                 </div>
               </div>
             </motion.div>
